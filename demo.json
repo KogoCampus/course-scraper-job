@@ -1,0 +1,240 @@
+{
+    "programName": "AANB_V", 
+    "programCode": "Applied Animal Biology", 
+    "courses": [
+        {
+            "courseName": "Graduate Seminar", 
+            "courseCode": "AANB_V 500", 
+            "sections": [
+                {
+                    "sectionName": "AANB_V 500-003", 
+                    "deliveryMethod": "In Person Learning", 
+                    "term": "Winter Term 1", 
+                    "activity": "Seminar", 
+                    "credits": "3", 
+                    "startDate": "2024-09-03", 
+                    "startTime": "", 
+                    "endDate": "2025-04-08", 
+                    "endTime": "", 
+                    "days": ""
+                }
+            ]
+        }, 
+        {
+            "courseName": "Research Methodology in Applied Animal Biology", 
+            "courseCode": "AANB_V 504", 
+            "sections": [
+                {
+                    "sectionName": "AANB_V 504-001", 
+                    "deliveryMethod": "In Person Learning", 
+                    "term": "Winter Term 1", 
+                    "activity": "Lecture", 
+                    "credits": "3", 
+                    "startDate": "2024-09-03", 
+                    "startTime": "", 
+                    "endDate": "2024-12-06", 
+                    "endTime": "", 
+                    "days": ""
+                }
+            ]
+            }, 
+            {
+                "courseName": "Directed Studies - Directed Studies", 
+                "courseCode": "AANB_V 530A", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 530A-A_001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study", 
+                        "credits": "3", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-02", 
+                        "endTime": "", 
+                        "days": ""
+                    }, 
+                    {
+                        "sectionName": "AANB_V 530A-A_003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study", 
+                        "credits": "3", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-07", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Directed Studies - Directed Studies", 
+                "courseCode": "AANB_V 530B", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 530B-B_001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study", 
+                        "credits": "3", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-02", 
+                        "endTime": "", 
+                        "days": ""
+                    }, 
+                    {
+                        "sectionName": "AANB_V 530B-B_003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study", 
+                        "credits": "3", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-07", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Directed Studies - Directed Studies", 
+                "courseCode": "AANB_V 530C", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 530C-C_001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study", 
+                        "credits": "6", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-02", 
+                        "endTime": "", 
+                        "days": ""}
+                    , 
+                    {
+                        "sectionName": "AANB_V 530C-C_003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Independent Study",
+                        "credits": "6", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-07", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Master's Thesis - Master's Thesis", 
+                "courseCode": "AANB_V 549A", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 549A-A_001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": 12, 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }, 
+                    {
+                        "sectionName": "AANB_V 549A-A_003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": 12, 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Master's Thesis - Master's Thesis", 
+                "courseCode": "AANB_V 549B", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 549B-B_001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": "18", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }, 
+                    {
+                        "sectionName": "AANB_V 549B-B_003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": "18", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Tutorials in Animal Welfare Research", 
+                "courseCode": "AANB_V 551", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 551-001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Discussion", 
+                        "credits": 3, 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }, 
+            {
+                "courseName": "Doctoral Dissertation", 
+                "courseCode": "AANB_V 649", 
+                "sections": [
+                    {
+                        "sectionName": "AANB_V 649-001", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": "0", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2024-12-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }, 
+                    {
+                        "sectionName": "AANB_V 649-003", 
+                        "deliveryMethod": "In Person Learning", 
+                        "term": "Winter Term 1", 
+                        "activity": "Thesis", 
+                        "credits": "0", 
+                        "startDate": "2024-09-03", 
+                        "startTime": "", 
+                        "endDate": "2025-04-06", 
+                        "endTime": "", 
+                        "days": ""
+                    }
+                ]
+            }
+    ]
+}
