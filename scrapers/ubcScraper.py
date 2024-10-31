@@ -1,6 +1,6 @@
 import asyncio
 from playwright.async_api import async_playwright
-import prompter
+from parser import prompter
 import json
 
 data = []
@@ -18,7 +18,7 @@ async def setupPage(page):
 
     await page.wait_for_selector('#subjects-table td')
 
-async def getAllData(url):
+async def getAllData(url = "https://courses.students.ubc.ca/browse-courses"):
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
@@ -110,7 +110,8 @@ async def getAllData(url):
                         courses = await page.locator('td[data-colindex="0"] a').all()
                     
                     await page.go_back()
-                    # print(json.dumps(currentProgram))
+                    print(json.dumps(currentProgram))
+                    print("\n")
                     data.append(currentProgram)
                     await page.wait_for_selector('td[data-colindex="0"] a')
                     isFirstPage = await page.evaluate("""

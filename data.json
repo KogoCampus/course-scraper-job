@@ -1,0 +1,102 @@
+{
+    "subjectName": "Actuarial Mathematics", 
+    "subjectCode": "ACMA", 
+    "courses": [
+        {
+            "courseName": "Introduction to Insurance", 
+            "courseCode": "ACMA 101", 
+            "detail": [
+                {
+                    "info": {
+                        "notes": "", 
+                        "deliveryMethod": "In Person", 
+                        "description": "General overview of universally useful concepts in insurance, pensions and financial management. Typical life, health and property & casualty insurance products; underwriting; pricing; reserving; regulation; social insurance; retirement plans and annuities; financial planning: mortgages, loans, wealth management.", 
+                        "section": "D100", 
+                        "units": "3", 
+                        "title": "Introduction to Insurance",
+                        "type": "e", 
+                        "classNumber": "6610", 
+                        "departmentalUgradNotes": "<strong> Students with Disabilities:<br /></strong>Students requiring accommodations as a result of disability must contact the Centre for Accessible Learning 778-782-3112 or <a href=\"mailto:caladmin@sfu.ca\">caladmin@sfu.ca</a>.<br /><strong><br /><br />Tutor Requests:<br /></strong>Students looking for a tutor should visit <a href=\"https://www.sfu.ca/stat-actsci/all-students/other-resources/tutoring.html\">https://www.sfu.ca/stat-actsci/all-students/other-resources/tutoring.html</a>. We accept no responsibility for the consequences of any actions taken related to tutors.", 
+                        "prerequisites": "", 
+                        "number": "101", 
+                        "requiredReadingNotes": "Your personalized Course Material list, including digital and physical textbooks, are available through the SFU Bookstore website by simply entering your Computing ID at: <a href=\"https://shop.sfu.ca/course-materials/my-personalized-course-materials\">shop.sfu.ca/course-materials/my-personalized-course-materials</a>.", "registrarNotes": "<p><strong>ACADEMIC INTEGRITY: YOUR WORK, YOUR SUCCESS</strong></p>\r\n<p>SFU&rsquo;s Academic Integrity website <a href=\"http://www.sfu.ca/students/academicintegrity.html\">http://www.sfu.ca/students/academicintegrity.html</a> is filled with information on what is meant by academic dishonesty, where you can find resources to help with your studies and the consequences of cheating. Check out the site for more information and videos that help explain the issues in plain English.</p>\r\n<p>Each student is responsible for his or her conduct as it affects the university community. Academic dishonesty, in whatever form, is ultimately destructive of the values of the university. Furthermore, it is unfair and discouraging to the majority of students who pursue their studies honestly. Scholarly integrity is required of all members of the university. <a href=\"http://www.sfu.ca/policies/gazette/student/s10-01.html\">http://www.sfu.ca/policies/gazette/student/s10-01.html</a><br /><br /><strong>RELIGIOUS ACCOMMODATION</strong></p>\r\n<p>Students with a faith background who may need accommodations during the term are encouraged to assess their needs as soon as possible and review the Multifaith religious accommodations&nbsp;<a href=\"https://www.sfu.ca/students/multifaith/resources/accommodation.html#:~:text=To%20request%20religious%20accommodation%2C%20you,the%20point%20of%20undue%20hardship.\">website</a>. The page outlines ways they begin working toward an accommodation and ensure solutions can be reached in a timely fashion.</p>", 
+                        "outlinePath": "2024/fall/acma/101/d100", 
+                        "term": "Fall 2024", 
+                        "gradingNotes": "<em><strong>All above grading is subject to change</strong></em>", 
+                        "corequisites": "MATH 150, 151, 154 or 157.", 
+                        "dept": "ACMA", 
+                        "degreeLevel": "UGRD", 
+                        "specialTopic": "", 
+                        "courseDetails": "<p>This course is an introduction to insurance products and financial planning. The topics covered include</p>\r\n<p><strong>Introduction</strong>: insurance concepts, time value of money, probability,&nbsp;expected value and standard deviation</p>\r\n<p><strong>Property &amp; Casualty insurance:</strong>&nbsp;frequency and severity, car insurance (coverage, risk classification, experience ratings), home insurance (coverage, types of policies)</p>\r\n<p><strong>Health insurance</strong>: individual versus group coverage, health benefits in Canada, private medical plans, coverage modifications (deductible, coinsurance, policy limit), pricing</p>\r\n<p><strong>Life Insurance</strong>: actuarial fundamentals, mortality tables, pricing, premium calculations for life insurance products (term, whole-life, endowment, life annuities), underwriting</p>\r\n<p><strong>Retirement income arrangement</strong>: government-administered pension programs, employer-sponsored retirement income plans (defined contribution, defined benefit, combinations)</p>\r\n<p>The topics covered by this course are subject to some adjustments.</p>\r\n<p><strong><em>This course is part of the University Accreditation Program and meets specific requirements set by the Canadian Institute of Actuaries (CIA). Please consult the&nbsp;CIA website&nbsp;for full details on CIA accreditation.</em></strong></p>", 
+                        "name": "ACMA 101 D100", 
+                        "designation": "Quantitative/Breadth-Science"
+                    }, 
+                    "instructor": [
+                        {
+                            "profileUrl": "https://www.sfu.ca/stat-actsci/department/profiles/cherie-ng.html", 
+                            "commonName": "Cherie", 
+                            "firstName": "Cherie Shui-Ting", 
+                            "lastName": "Ng", 
+                            "phone": "1 778 782-8004", 
+                            "roleCode": "PI", 
+                            "name": "Cherie Ng", 
+                            "officeHours": "", 
+                            "office": "", 
+                            "email": "cherien@sfu.ca"
+                        }
+                    ], 
+                    "courseSchedule": [
+                        {
+                            "endDate": "Tue Dec 03 00:00:00 PST 2024", 
+                            "campus": "Burnaby",
+                            "days": "Mo", 
+                            "sectionCode": "LEC", 
+                            "startTime": "12:30", 
+                            "isExam": false, 
+                            "endTime": "14:20", 
+                            "startDate": "Wed Sep 04 00:00:00 PDT 2024"
+                        }, 
+                        {
+                            "endDate": "Tue Oct 15 00:00:00 PDT 2024", 
+                            "campus": "Burnaby", 
+                            "days": "Tu", 
+                            "sectionCode": "LEC",
+                            "startTime": "12:30", 
+                            "isExam": false, 
+                            "endTime": "14:20", 
+                            "startDate": "Tue Oct 15 00:00:00 PDT 2024"
+                        }, 
+                        {
+                            "endDate": "Tue Dec 03 00:00:00 PST 2024", 
+                            "campus": "Burnaby", 
+                            "days": "We", 
+                            "sectionCode": "LEC", 
+                            "startTime": "12:30", 
+                            "isExam": false, 
+                            "endTime": "13:20", 
+                            "startDate": "Wed Sep 04 00:00:00 PDT 2024"
+                        }
+                    ], 
+                    "grades": [
+                        {
+                            "description": "Assignments", "weight": "20"
+                        }, 
+                        {
+                            "description": "Midterm", 
+                            "weight": "30"
+                        }, 
+                        {
+                            "description": "Final Exam", 
+                            "weight": "50"
+                        }
+                    ], 
+                    "recommendedText": [
+                        {
+                            "details": "<ul>\r\n<li><em>Introduction to Ratemaking and Loss Reserving for Property and Casualty Insurance, 5<sup>th</sup> </em>by R. Brown and W. S. Lennox, ACTEX Publications</li>\r\n<li><em>Life Insurance </em>by K. Black and H. Skipper, Prentice-Hall</li>\r\n<li><em>Morneau Shepell Handbook of Canadian Pension and Benefit Plans </em>by Morneau Shepell.</li>\r\n</ul>"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+setup.py
+course_crawler.egg-info/PKG-INFO
+course_crawler.egg-info/SOURCES.txt
+course_crawler.egg-info/dependency_links.txt
+course_crawler.egg-info/top_level.txt
+curator/__init__.py
+curator/curator.py
+parser/__init__.py
+parser/prompter.py
+scrapers/__init__.py
+scrapers/sfu-gatherer.py
+scrapers/ubc-scraper.py

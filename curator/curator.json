@@ -1,0 +1,10 @@
+{
+    "simon_fraser_university": {
+        "latest_scraped_data_id": "simon_fraser_university_2024_10_27", 
+        "previous_scraped_data_id": "simon_fraser_university_2024_10_26"
+    }, 
+    "university_of_british_columbia": {
+        "latest_scraped_data_id": "", 
+        "previous_scraped_data_id": ""
+    },
+    "university_of_victoria": {"latest_scraped_data_id": "university_of_victoria_2024_10_26", "previous_scraped_data_id": "university_of_victoria_2024_10_26"}}
