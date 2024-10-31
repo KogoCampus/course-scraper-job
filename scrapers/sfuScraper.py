@@ -63,7 +63,7 @@ async def extractData():
 
     return data
 
-asyncio.run(extractData())
+# asyncio.run(extractData())
 
 # kogo-campus-crawler-staging-data:
 #     simon_fraser_university_2024_10_29_uncleansed: {

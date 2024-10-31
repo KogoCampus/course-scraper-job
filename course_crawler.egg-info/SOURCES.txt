@@ -1,4 +1,6 @@
 setup.py
+converter/__init__.py
+converter/converter.py
 course_crawler.egg-info/PKG-INFO
 course_crawler.egg-info/SOURCES.txt
 course_crawler.egg-info/dependency_links.txt
@@ -8,5 +10,6 @@ curator/curator.py
 parser/__init__.py
 parser/prompter.py
 scrapers/__init__.py
-scrapers/sfu-gatherer.py
-scrapers/ubc-scraper.py
+scrapers/main.py
+scrapers/sfuScraper.py
+scrapers/ubcScraper.py

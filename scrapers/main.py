@@ -22,13 +22,14 @@ schoolToScraper = [
     }
 ]
 
-async def run():
+async def runTasks():
+    print("start")
     for task in schoolToScraper:
-        schoolName = task['schoolname']
+        schoolName = task['schoolName']
         f = task['function']
-
+        print(f'Start running {schoolName}')
         # data: dict
-        data = asyncio.run(f())
+        data = await f()
 
         # store uncleansed
         s3 = boto3.client('s3')
@@ -48,5 +49,6 @@ async def run():
             curator.updateCleansed(cleansedKey, schoolName)
         except:
             return
-        
+
+asyncio.run(runTasks())
         

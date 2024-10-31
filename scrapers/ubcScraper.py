@@ -142,4 +142,4 @@ async def getAllData(url = "https://courses.students.ubc.ca/browse-courses"):
         with open('data.json', 'w') as f:
             json.dump(data, f)
 
-asyncio.run(getAllData("https://courses.students.ubc.ca/browse-courses"))
+# asyncio.run(getAllData("https://courses.students.ubc.ca/browse-courses"))
