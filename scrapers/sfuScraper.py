@@ -32,8 +32,8 @@ async def extractData():
             continue
     
         currentSubject = {
-            "subjectName": d['name'],
-            "subjectCode": d['text'],
+            "programName": d['name'],
+            "programCode": d['text'],
             "courses": [],
         }
         print(d['name'])
@@ -42,14 +42,14 @@ async def extractData():
             for c in courses:
                 currentCourse = {
                     "courseName": c['title'],
-                    "courseCode": currentSubject['subjectCode'] + " " + c['text'],
-                    "detail": [],
+                    "courseCode": currentSubject['programCode'] + " " + c['text'],
+                    "sections": [],
                 }
                 sections = requests.get(baseUrl + "/" + d['value'] + "/" + c['value']).json()
                 if "errorMessage" not in sections:
                     for s in sections:
-                        detail = requests.get(baseUrl + "/" + d['value'] + "/" + c['value'] + "/" + s['value']).json()
-                        currentCourse['detail'].append(detail)
+                        section = requests.get(baseUrl + "/" + d['value'] + "/" + c['value'] + "/" + s['value']).json()
+                        currentCourse['sections'].append(section)
                         # print(f'CS: {currentSection}')
                         # print('\n')
                 
@@ -58,7 +58,7 @@ async def extractData():
         data.append(currentSubject)
 
     # temporary
-    with open('data.json', 'w') as f:
+    with open('sfu-data.json', 'w') as f:
         json.dump(data, f)
 
     return data

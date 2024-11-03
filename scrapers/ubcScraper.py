@@ -51,6 +51,7 @@ async def getAllData(url = "https://courses.students.ubc.ca/browse-courses"):
 
             for j in range(0, len(subjects), 1):
                 currentName = await subjects[j].inner_text()
+                print(currentName)
                 if currentName != prevName:
                     prevName = currentName
                     await subjects[j].click()
@@ -95,23 +96,15 @@ async def getAllData(url = "https://courses.students.ubc.ca/browse-courses"):
                             sections = await page.locator('.course-sections-box').all()
                             for s in sections:
                                 section = await s.inner_html()
-                                # print(section)
                                 out = await prompter.extractData(section)
                                 currentCourse['sections'].extend(out)
-                            # html = await html.inner_html()
-                            # section = await prompter.extractData(html)
-                            # currentCourse['sections'] = section
-                            # print(section)
 
-
-                        
+                        # print(currentCourse)    
                         currentProgram['courses'].append(currentCourse)
                         await page.go_back()
                         courses = await page.locator('td[data-colindex="0"] a').all()
                     
                     await page.go_back()
-                    print(json.dumps(currentProgram))
-                    print("\n")
                     data.append(currentProgram)
                     await page.wait_for_selector('td[data-colindex="0"] a')
                     isFirstPage = await page.evaluate("""
@@ -139,7 +132,9 @@ async def getAllData(url = "https://courses.students.ubc.ca/browse-courses"):
         await browser.close()
 
         # data = json.dumps(data)
-        with open('data.json', 'w') as f:
+        with open('ubc-data.json', 'w') as f:
             json.dump(data, f)
+
+        return data
 
 # asyncio.run(getAllData("https://courses.students.ubc.ca/browse-courses"))

@@ -3,38 +3,60 @@ import os
 import boto3
 
 # school format = "simon_fraser_university"
-def updateCleansed(id, school):
-    f = open(os.getcwd() + '/curator/curator.json')
-    data = json.load(f)
-
-    if data.get(school):
-        data[school]["previous_scraped_data_id_cleansed"] = data[school]["latest_scraped_data_id_cleansed"]
-        data[school]["latest_scraped_data_id_cleansed"] = id
+async def updateCleansed(id, school):
+    path = os.getcwd() + '/curator/curator.json'
+    f = open(path)
+    if os.stat(path).st_size == 0:
+        print("no uncleansed data")
+        return
     else:
-        data[school] = {
-            "latest_scraped_data_id_cleansed": id,
-            "previous_scraped_data_id_cleansed": "",
+        data = json.load(f)
+        if data.get(school):
+            print('school existed')
+            data[school]["previous_scraped_data_id_cleansed"] = data[school]["latest_scraped_data_id_uncleansed"]
+            data[school]["latest_scraped_data_id_cleansed"] = id
+        else:
+            print("school doesn't exist - newly created")
+            data[school] = {
+                "latest_scraped_data_id_cleansed": id,
+                "previous_scraped_data_id_cleansed": "",
+            }
+        writeJson(data)
+        f.close()
+
+async def updateUncleansed(id, school):
+    path = os.getcwd() + '/curator/curator.json'
+    f = open(path)
+    if os.stat(path).st_size == 0:
+        obj = {
+            school: {
+                "latest_scraped_data_id_uncleansed": id,
+                "previous_scraped_data_id_uncleansed": "",
+                "latest_scraped_data_id_cleansed": "",
+                "previous_scraped_data_id_cleansed": "",
+            }
         }
-    writeJson(data)
-    f.close()
-
-def updateUncleansed(id, school):
-    f = open(os.getcwd() + '/curator/curator.json')
-    data = json.load(f)
-
-    if data.get(school):
-        data[school]["previous_scraped_data_id_uncleansed"] = data[school]["latest_scraped_data_id_uncleansed"]
-        data[school]["latest_scraped_data_id_uncleansed"] = id
+        writeJson(obj)
+        f.close()
+        return
     else:
-        data[school] = {
-            "latest_scraped_data_id_uncleansed": id,
-            "previous_scraped_data_id_uncleansed": "",
-        }
-    writeJson(data)
-    f.close()
+        data = json.load(f)
+        if data.get(school):
+            print('school existed')
+            data[school]["previous_scraped_data_id_uncleansed"] = data[school]["latest_scraped_data_id_uncleansed"]
+            data[school]["latest_scraped_data_id_uncleansed"] = id
+        else:
+            print("school doesn't exist - newly created")
+            data[school] = {
+                "latest_scraped_data_id_uncleansed": id,
+                "previous_scraped_data_id_uncleansed": "",
+            }
+        writeJson(data)
+        f.close()
 
 
 
 def writeJson(data):
     with open(os.getcwd() + '/curator/curator.json', 'w') as f:
         json.dump(data, f)
+    f.close()
