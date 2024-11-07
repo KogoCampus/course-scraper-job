@@ -1,6 +1,5 @@
 import json
 import os
-import boto3
 
 # school format = "simon_fraser_university"
 async def updateCleansed(id, school):

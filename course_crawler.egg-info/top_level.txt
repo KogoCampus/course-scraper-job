@@ -1,4 +1,0 @@
-converter
-curator
-parser
-scrapers
