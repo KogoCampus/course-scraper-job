@@ -11,7 +11,12 @@ or pip install <packages>:
 - "fastapi[standard]"
 
 
-## Start the application
+## Run api
 ```python
 fastapi dev api/main.py
+```
+
+## Start the application
+```bash
+./script.sh
 ```

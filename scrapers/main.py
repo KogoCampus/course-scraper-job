@@ -41,9 +41,8 @@ async def runTasks():
             s3.put_object(Bucket=os.getenv("S3_BUCKET"), Key=key, Body=serializedData)
             
             print('cleansed stored')
-            await curator.updateCleansed(key, schoolName)
-            with open('sfu-data.json', 'w') as f:
-                json.dump(serializedData, f)
+            await curator.update(key, schoolName)
+            print(f'${schoolName} done')
         except:
             return
 
