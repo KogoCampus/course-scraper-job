@@ -31,7 +31,9 @@ class LlmHtmlParser:
                 messages=self._create_messages(html, prompts, expect_array),
                 response_format={"type": "json_object"},
                 temperature=0,
-                max_tokens=4000
+                max_tokens=4000,
+                api_key=settings.MISTRAL_API_KEY,
+                api_base="https://api.mistral.ai/v1"
             )
             
             parsed_data = json.loads(response.choices[0].message.content)
@@ -41,7 +43,7 @@ class LlmHtmlParser:
             
             return parsed_data
         except Exception as e:
-            logger.error(f"Error parsing HTML with GPT-4: {str(e)}")
+            logger.error(f"Error parsing HTML with Mistral: {str(e)}")
             return [] if expect_array else {}
 
     async def parse_html_to_json(self, html: str, prompts: List[str]) -> Dict:

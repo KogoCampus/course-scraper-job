@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     S3_PREFIX: str = "course_data"
 
     # LLM settings
-    LLM_MODEL: str = "gpt-4"
-    OPENAI_API_KEY: Optional[str] = None
+    LLM_MODEL: str = "mistral/mistral-medium"
+    MISTRAL_API_KEY: Optional[str] = None
     AWS_ACCESS_KEY_ID: Optional[str] = None
     AWS_SECRET_ACCESS_KEY: Optional[str] = None
 
@@ -33,6 +33,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     class Config:
-        env_file = ".env"
+        env_file = ('.env', 'local.env')
 
 settings = Settings()

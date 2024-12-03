@@ -2,25 +2,7 @@
 
 A Celery web scraper to automate collection of course information from various schools.
 
-## Setup
-
-1. Copy the example environment file to a new file named `.env`:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-2. Populate the `.env` file with your credentials and configuration.
-
-- Get your AWS credentials and add them to the `.env` file.
-    ```bash
-    cat ~/.aws/credentials
-    ```
-
-- Add your OpenAI API key to the `.env` file.
-
-
-3. Build and run
+## Build and run
 ```
 docker-compose up
 ```

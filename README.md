@@ -1,22 +1,15 @@
-## Install requirements in a virtual environment
-```bash
-pip install -r requirements.txt
+# Course Scraper
+
+## Setup
+
+1. Install SOPS:
 ```
-or pip install <packages>:
-- playwright
-- litellm
-- boto3
-- requests
-- python-dotenv
-- "fastapi[standard]"
-
-
-## Run api
-```python
-fastapi dev api/main.py
+brew install sops
 ```
 
-## Start the application
-```bash
-./script.sh
+2. Decrypt the environment file:
 ```
+sops --config ./sops.yaml -d secrets.env > .env
+```
+
+3. Fill in the missing values in the `values.env` file.
