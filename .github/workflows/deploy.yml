@@ -49,4 +49,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest 
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Make deploy script executable
+        run: chmod +x .github/deploy-apprunner.sh
+
+      - name: Deploy to App Runner
+        run: .github/deploy-apprunner.sh
