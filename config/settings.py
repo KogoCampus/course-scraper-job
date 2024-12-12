@@ -4,6 +4,7 @@ from typing import Optional
 
 class Settings(BaseSettings):
     ENV: str = "development"
+    LOG_LEVEL: str = "INFO"
 
     # Storage settings
     STORAGE_TYPE: str = "local"
@@ -16,6 +17,8 @@ class Settings(BaseSettings):
     # LLM settings
     LLM_MODEL: str = "mistral/mistral-medium"
     MISTRAL_API_KEY: Optional[str] = None
+
+    # AWS settings
     AWS_ACCESS_KEY_ID: Optional[str] = None
     AWS_SECRET_ACCESS_KEY: Optional[str] = None
 
@@ -30,8 +33,11 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://redis:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/0"
 
-    # Logging settings
-    LOG_LEVEL: str = "INFO"
+    # Flower authentication settings
+    FLOWER_OAUTH2_KEY: Optional[str] = None
+    FLOWER_OAUTH2_SECRET: Optional[str] = None
+    FLOWER_OAUTH2_REDIRECT_URI: Optional[str] = None
+    FLOWER_AUTH_PROVIDER: Optional[str] = None
 
     class Config:
         env_file = (Path(__file__).parent.parent / '.env',)
