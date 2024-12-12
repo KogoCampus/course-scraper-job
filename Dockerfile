@@ -27,6 +27,10 @@ RUN playwright install chromium && \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Ensure environment file is present and readable
+RUN chown scraper:scraper .env && \
+    chmod 600 .env
+
 # Ensure all files are owned by scraper user
 RUN chown -R scraper:scraper /app
 
