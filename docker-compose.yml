@@ -19,8 +19,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5555:5555"
-    environment:
-      - FLOWER_UNAUTHENTICATED_API=true
     volumes:
       - .:/app:delegated
     depends_on:
