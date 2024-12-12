@@ -20,7 +20,7 @@ class StorageEncoder(json.JSONEncoder):
 class BaseStorage(ABC):
     def __init__(self, base_dir: Path):
         self.base_dir = base_dir
-        self.timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.timestamp = datetime.now().strftime("%Y%m%d-%H:%M:%S")
 
     def _serialize_data(self, data: Any) -> str:
         """Serialize data using unified encoder"""
