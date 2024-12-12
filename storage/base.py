@@ -18,8 +18,8 @@ class StorageEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class BaseStorage(ABC):
-    def __init__(self, storage_path_prefix: Path):
-        self.storage_path_prefix = storage_path_prefix
+    def __init__(self, base_dir: Path):
+        self.base_dir = base_dir
         self.timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     def _serialize_data(self, data: Any) -> str:

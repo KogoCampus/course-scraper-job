@@ -24,11 +24,17 @@ sudo docker compose up --build
 ## Triggering Tasks Manually via CLI (Local Testing)
 
 ```bash
-curl -X POST http://localhost:5555/api/task/async-apply/scraper_task -d '{"args": ["task_name"]}'
+curl -X POST \
+  'http://localhost:5555/api/task/async-apply/scraper_task' \
+  -u "admin:password" \
+  -d '{"args": ["task_name"]}'
 ```
 for example:
 ```bash
-curl -X POST http://localhost:5555/api/task/async-apply/scraper_task -d '{"args": ["sample"]}'
+curl -X POST \
+  'http://localhost:5555/api/task/async-apply/scraper_task' \
+  -u "admin:password" \
+  -d '{"args": ["sample"]}'
 ```
 
 

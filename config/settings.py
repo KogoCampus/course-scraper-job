@@ -34,10 +34,8 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/0"
 
     # Flower authentication settings
-    FLOWER_OAUTH2_KEY: Optional[str] = None
-    FLOWER_OAUTH2_SECRET: Optional[str] = None
-    FLOWER_OAUTH2_REDIRECT_URI: Optional[str] = None
-    FLOWER_AUTH_PROVIDER: Optional[str] = None
+    FLOWER_BASIC_AUTH_USERNAME: str = "admin"
+    FLOWER_BASIC_AUTH_PASSWORD: str = "password"
 
     class Config:
         env_file = (Path(__file__).parent.parent / '.env',)
