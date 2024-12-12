@@ -18,8 +18,9 @@ class StorageEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class BaseStorage(ABC):
-    def __init__(self, base_dir: Path):
-        self.base_dir = base_dir
+    def __init__(self, storage_path_prefix: Path):
+        self.storage_path_prefix = storage_path_prefix
+        self.timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     def _serialize_data(self, data: Any) -> str:
         """Serialize data using unified encoder"""
@@ -30,8 +31,7 @@ class BaseStorage(ABC):
 
     def _get_task_dir_path(self, task_name: str, task_id: str) -> Path:
         """Get path for saving data"""
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        return self.base_dir / task_name / f"{timestamp}-{task_id}"
+        return self.base_dir / task_name / f"{self.timestamp}-{task_id}"
 
     @abstractmethod
     async def save_data(self, data: any, file_name: str, task_name: str, task_id: str) -> str:

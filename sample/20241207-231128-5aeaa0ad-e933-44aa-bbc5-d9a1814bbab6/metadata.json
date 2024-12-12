@@ -1,0 +1,10 @@
+{
+  "task_id": "5aeaa0ad-e933-44aa-bbc5-d9a1814bbab6",
+  "task_name": "sample",
+  "started_at": "2024-12-07T23:11:28.188022",
+  "status": "success",
+  "error": null,
+  "total_programs": 3,
+  "total_courses": 23,
+  "total_sections": 59
+}

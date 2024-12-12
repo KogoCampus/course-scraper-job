@@ -17,6 +17,7 @@ class ScheduleModel(TypedDict):
     startTime: Optional[time]
     endTime: Optional[time]
     days: List[WeekDay]
+    location: Optional[str]
 
 class SectionModel(TypedDict):
     sectionName: Optional[str]

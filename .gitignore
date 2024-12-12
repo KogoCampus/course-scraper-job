@@ -23,6 +23,7 @@ wheels/
 
 # Virtual Environment
 .env
+.env.local
 .env.dec
 secrets.yaml.dec
 .venv

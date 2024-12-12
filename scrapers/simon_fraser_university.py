@@ -142,7 +142,8 @@ class SimonFraserUniversityScraper(BaseScraper):
                             "endDate": self._parse_date(block.get('endDate')),
                             "startTime": self._parse_time(block.get('startTime')),
                             "endTime": self._parse_time(block.get('endTime')),
-                            "days": self._parse_days(block.get('days'))
+                            "days": self._parse_days(block.get('days')),
+                            "location": block.get('campus')
                         }
                         schedule_items.append(schedule_item)
 

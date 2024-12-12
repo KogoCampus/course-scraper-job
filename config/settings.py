@@ -3,13 +3,14 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # Base settings
-    BASE_DIR: Path = Path(__file__).resolve().parent.parent / "local"
     ENV: str = "development"
 
     # Storage settings
     STORAGE_TYPE: str = "local"
-    S3_BUCKET: Optional[str] = None
+    ## local storage settings
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent / "local"
+    ## s3 storage settings
+    S3_BUCKET: str = "course-scraper-storage"
     S3_PREFIX: str = "course_data"
 
     # LLM settings
@@ -33,6 +34,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     class Config:
-        env_file = ('.env', 'local.env')
+        env_file = (Path(__file__).parent.parent / '.env',)
+        env_file_encoding = 'utf-8'
 
 settings = Settings()

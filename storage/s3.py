@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from pathlib import Path
 
 from .base import BaseStorage
+from config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,11 @@ class S3Storage(BaseStorage):
     def __init__(self, bucket: str, prefix: str = ""):
         super().__init__(Path(prefix) if prefix else Path())
         self.bucket = bucket
-        self.s3 = boto3.client('s3')
+        self.s3 = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
 
     def _path_to_s3_key(self, path: Path) -> str:
         """Convert Path to S3 key"""

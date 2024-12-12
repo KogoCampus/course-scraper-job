@@ -22,30 +22,25 @@ class ScheduleFactory(factory.DictFactory):
 
     @factory.lazy_attribute
     def startDate(self) -> date:
-        date_str = fake.date_between(start_date='+30d', end_date='+60d').strftime('%Y-%m-%d')
-        return self.factory.parent.date_parser.parse_date(date_str)
+        return fake.date_between(start_date='+30d', end_date='+60d')
 
     @factory.lazy_attribute
     def endDate(self) -> date:
         start_date = self.startDate
-        end_date = (datetime.combine(start_date, time.min) + timedelta(days=90)).date()
-        date_str = end_date.strftime('%Y-%m-%d')
-        return self.factory.parent.date_parser.parse_date(date_str)
+        return (datetime.combine(start_date, time.min) + timedelta(days=90)).date()
 
     @factory.lazy_attribute
     def startTime(self) -> time:
         hour = random.randint(8, 16)
         minute = random.choice([0, 30])
-        time_str = f"{hour:02d}:{minute:02d}"
-        return self.factory.parent.date_parser.parse_time(time_str)
+        return time(hour=hour, minute=minute)
 
     @factory.lazy_attribute
     def endTime(self) -> time:
         start_dt = datetime.combine(date.today(), self.startTime)
         duration = timedelta(hours=random.choice([1, 1.5, 2]))
         end_dt = start_dt + duration
-        time_str = end_dt.strftime('%H:%M')
-        return self.factory.parent.date_parser.parse_time(time_str)
+        return end_dt.time()
 
     @factory.lazy_attribute
     def days(self) -> List[WeekDay]:
@@ -57,6 +52,10 @@ class ScheduleFactory(factory.DictFactory):
             WeekDay.THURSDAY,
             WeekDay.FRIDAY
         ], num_days)
+
+    @factory.lazy_attribute
+    def location(self) -> str:
+        return random.choice(["Burnaby", "Surrey", "Vancouver"])
 
 class SectionFactory(factory.DictFactory):
     class Meta:
