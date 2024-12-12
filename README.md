@@ -41,12 +41,12 @@ brew install sops
 
 2. Decrypt the environment file:
 ```
-sops --config .sops/sops.yaml -d -i prod.env
+sops --config .sops/sops.yaml -d -i .sops/prod.env
 ```
 
 3. Fill in the missing values in the `values.env` file.
 
 4. Encrypt the environment file:
 ```
-sops --config .sops/sops.yaml -e -i prod.env
+sops --config .sops/sops.yaml -e -i .sops/prod.env
 ```
