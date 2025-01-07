@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # Storage settings
     STORAGE_TYPE: str = "local"
     ## local storage settings
-    BASE_DIR: Path = Path(__file__).resolve().parent.parent / "local"
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent / "local"
     ## s3 storage settings
     S3_BUCKET: str = "course-scraper-storage"
     S3_PREFIX: str = "course_data"

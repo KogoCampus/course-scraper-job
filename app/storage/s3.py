@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 from pathlib import Path
 
 from .base import BaseStorage
-from config.settings import settings
+from app.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +25,15 @@ class S3Storage(BaseStorage):
         """Convert Path to S3 key"""
         return str(path).lstrip('/')
 
-    async def save_data(self, data: any, file_name: str, task_name: str, task_id: str) -> str:
+    async def save_data(self, data: any, task_name: str, file_name: str, save_path_suffix: list[str]) -> str:
         """Save course data to S3"""
         try:
-            path = self._get_task_dir_path(task_name, task_id) / file_name
-            s3_key = self._path_to_s3_key(path)
+            # Construct path with optional suffixes
+            path_parts = [task_name]
+            path_parts.extend(save_path_suffix)
+            path_parts.append(file_name)
+            
+            s3_key = self._path_to_s3_key(Path(*path_parts))
             
             json_data = self._serialize_data(data)
             
@@ -40,9 +44,9 @@ class S3Storage(BaseStorage):
                 ContentType='application/json'
             )
 
-            logger.info(f"Saved {file_name} to S3 for {task_name} {task_id}")
+            logger.info(f"Saved {file_name} to S3 for {task_name}")
             return f"s3://{self.bucket}/{s3_key}"
         except Exception as e:
-            logger.error(f"Error saving data to S3 for {task_name} {task_id}: {str(e)}")
+            logger.error(f"Error saving data to S3 for {task_name}: {str(e)}")
             raise
 

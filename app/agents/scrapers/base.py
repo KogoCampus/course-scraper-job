@@ -1,39 +1,30 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, List
-from models.course import CourseListingModel
-from models.task import TaskStatus, TaskResultModel
+from app.models.course import CourseListingModel
+from app.models.task import TaskStatus, TaskResultModel
 import logging
 import httpx
-from utils.llm_html_parser import LlmHtmlParser
-from utils.date_parser import DateParser
+from app.utils.llm_html_parser import LlmHtmlParser
 
 
 class BaseScraper(ABC):
-    def __init__(self, task_name: str):
+    def __init__(self, task_name: str, logger: logging.Logger):
         self.task_name = task_name
         self.started_at = datetime.now()
         
         # ================================================
         # Scraper Utilities
-        self.logger = self._get_logger()
+        self.logger = logger
         self.http = self._get_http_client()
         self.llm_html_parser = self._get_llm_html_parser()
-        self.date_parser = self._get_date_parser()
         # ================================================
         
-    def _get_logger(self):
-        class_name = self.__class__.__name__
-        return logging.getLogger(f"celery.task.{class_name}")
-
     def _get_http_client(self):  
         return httpx.AsyncClient()
 
     def _get_llm_html_parser(self) -> LlmHtmlParser:
         return LlmHtmlParser()
-
-    def _get_date_parser(self) -> DateParser:
-        return DateParser()
     
     @abstractmethod
     async def fetch_courses(self) -> CourseListingModel:

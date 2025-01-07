@@ -1,4 +1,4 @@
-from config.settings import settings
+from app.config.settings import settings
 
 # Basic configuration
 port = 5555

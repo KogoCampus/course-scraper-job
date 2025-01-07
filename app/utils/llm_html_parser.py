@@ -1,8 +1,9 @@
-from typing import Dict, List
 import json
 import logging
+from typing import Dict, List
 from litellm import acompletion
-from config.settings import settings
+
+from app.config.settings import settings
 
 logger = logging.getLogger("course_scraper.llm_html_parser")
 

@@ -6,8 +6,6 @@ from datetime import datetime, date, time
 import json
 from enum import Enum
 
-logger = logging.getLogger("course_scraper.storage")
-
 class StorageEncoder(json.JSONEncoder):
     """Unified JSON encoder for all storage backends"""
     def default(self, obj: Any) -> Any:
@@ -33,11 +31,11 @@ class BaseStorage(ABC):
             return data
         return json.dumps(data, cls=StorageEncoder, indent=2)
 
-    def _get_task_dir_path(self, task_name: str, task_id: str) -> Path:
+    def _get_task_dir_path(self, task_name: str) -> Path:
         """Get path for saving data"""
-        return self.base_dir / task_name / f"{self.timestamp}-{task_id}"
+        return self.base_dir / task_name
 
     @abstractmethod
-    async def save_data(self, data: any, file_name: str, task_name: str, task_id: str) -> str:
+    async def save_data(self, data: any, task_name: str, file_name: str, save_path_suffix: list[str]) -> str:
         """Save course data"""
         pass

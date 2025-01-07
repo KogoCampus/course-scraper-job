@@ -1,8 +1,9 @@
 from typing import Union
-from config.settings import Settings
+
 from .local import LocalStorage
 from .s3 import S3Storage
 from .base import BaseStorage
+from app.config.settings import Settings
 
 __all__ = ['LocalStorage', 'S3Storage', 'BaseStorage', 'get_storage_backend']
 

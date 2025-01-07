@@ -1,19 +1,19 @@
-from datetime import datetime, date, time
+from datetime import datetime
 from typing import Dict, List, Optional
+import logging
 
 from .base import BaseScraper
-from models.course import (
+from app.models.course import (
     ProgramModel,
     CourseModel,
-    SectionModel,
-    ScheduleModel,
+    SessionModel,
     CourseListingModel,
-    WeekDay
+    Day
 )
 
 class SimonFraserUniversityScraper(BaseScraper):
-    def __init__(self, task_name: str):
-        super().__init__(task_name)
+    def __init__(self, task_name: str, logger: logging.Logger):
+        super().__init__(task_name, logger)
         self.base_url = "https://www.sfu.ca/bin/wcm/course-outlines"
 
     def _determine_term(self) -> str:
@@ -27,19 +27,19 @@ class SimonFraserUniversityScraper(BaseScraper):
         else:  # 9 <= month <= 12
             return "fall"
 
-    def _parse_days(self, days_str: Optional[str]) -> List[WeekDay]:
-        """Convert SFU day string to list of WeekDay enums"""
+    def _parse_days(self, days_str: Optional[str]) -> List[Day]:
+        """Convert SFU day string to list of Day enums"""
         if not days_str:
             return []
             
         day_map = {
-            'Mo': WeekDay.MONDAY,
-            'Tu': WeekDay.TUESDAY,
-            'We': WeekDay.WEDNESDAY,
-            'Th': WeekDay.THURSDAY,
-            'Fr': WeekDay.FRIDAY,
-            'Sa': WeekDay.SATURDAY,
-            'Su': WeekDay.SUNDAY
+            'Mo': Day.MONDAY,
+            'Tu': Day.TUESDAY,
+            'We': Day.WEDNESDAY,
+            'Th': Day.THURSDAY,
+            'Fr': Day.FRIDAY,
+            'Sa': Day.SATURDAY,
+            'Su': Day.SUNDAY
         }
         
         days = []
@@ -48,14 +48,6 @@ class SimonFraserUniversityScraper(BaseScraper):
             if day_code in day_map:
                 days.append(day_map[day_code])
         return days
-
-    def _parse_date(self, date_str: Optional[str]) -> Optional[date]:
-        """Convert date string to date object"""
-        return self.date_parser.parse_date(date_str)
-
-    def _parse_time(self, time_str: Optional[str]) -> Optional[time]:
-        """Convert time string to time object"""
-        return self.date_parser.parse_time(time_str)
 
     async def _fetch_json(self, url: str) -> Optional[Dict]:
         """Fetch JSON data from URL with error handling"""
@@ -71,8 +63,49 @@ class SimonFraserUniversityScraper(BaseScraper):
                 
             return data
         except Exception as e:
-            self.logger.error(f"Error fetching {url}: {str(e)}")
+            self.logger.warning(f"Error fetching {url}: {str(e)}")
             return None
+
+    def _parse_date_string(self, date_str: str) -> datetime:
+        """Parse SFU date string format, handling timezone"""
+        try:
+            # Remove timezone abbreviation (e.g., PST, PDT) before parsing
+            # Format: "Mon Jan 06 00:00:00 PST 2025" -> "Mon Jan 06 00:00:00 2025"
+            date_parts = date_str.split()
+            if len(date_parts) == 6:  # If format matches "Day Month Date Time TZ Year"
+                date_str = f"{' '.join(date_parts[:4])} {date_parts[5]}"  # Skip TZ part
+            return datetime.strptime(date_str, '%a %b %d %H:%M:%S %Y')
+        except Exception as e:
+            raise Exception(f"Failed to parse date string '{date_str}': {str(e)}") from e
+
+    def _resolve_schedule_block(self, block: Dict) -> SessionModel:
+        """Parse schedule block into SessionModel"""
+        try:
+            # Parse dates
+            start_date = self._parse_date_string(block.get('startDate', ''))
+            end_date = self._parse_date_string(block.get('endDate', ''))
+            
+            # Parse time separately and combine with date
+            if block.get('startTime'):
+                start_time = datetime.strptime(block.get('startTime', ''), '%H:%M').time()
+                start_timestamp = int(datetime.combine(start_date.date(), start_time).timestamp())
+            else:
+                start_timestamp = None
+                
+            if block.get('endTime'):
+                end_time = datetime.strptime(block.get('endTime', ''), '%H:%M').time()
+                end_timestamp = int(datetime.combine(end_date.date(), end_time).timestamp())
+            else:
+                end_timestamp = None
+
+            return {
+                "location": block.get('campus'),
+                "days": self._parse_days(block.get('days')),
+                "startTime": start_timestamp,
+                "endTime": end_timestamp
+            }
+        except Exception as e:
+            raise Exception(f"Failed to parse schedule block: {str(e)}") from e
 
     async def fetch_courses(self) -> CourseListingModel:
         """Fetch all course data from SFU API"""
@@ -83,6 +116,7 @@ class SimonFraserUniversityScraper(BaseScraper):
         departments = await self._fetch_json(base_url)
         if not departments:
             return {
+                "semester": f"{term.capitalize()} {year}",
                 "programs": [],
                 "total_programs": 0,
                 "total_courses": 0,
@@ -110,7 +144,8 @@ class SimonFraserUniversityScraper(BaseScraper):
                 current_course: CourseModel = {
                     "courseName": course.get('title'),
                     "courseCode": f"{program['programCode']} {course.get('text')}",
-                    "sections": []
+                    "credit": None,  # Credit info not available in API
+                    "sessions": []
                 }
 
                 sections_url = f"{self.base_url}?{year}/{term}/{dept['value']}/{course['value']}"
@@ -129,47 +164,33 @@ class SimonFraserUniversityScraper(BaseScraper):
                     if not detail:
                         continue
 
-                    info = detail.get('info', {})
                     schedule = detail.get('courseSchedule', [])
                     
-                    schedule_items: List[ScheduleModel] = []
                     for block in schedule:
                         if block.get('isExam'):  # Skip exam schedules
                             continue
 
-                        schedule_item: ScheduleModel = {
-                            "startDate": self._parse_date(block.get('startDate')),
-                            "endDate": self._parse_date(block.get('endDate')),
-                            "startTime": self._parse_time(block.get('startTime')),
-                            "endTime": self._parse_time(block.get('endTime')),
-                            "days": self._parse_days(block.get('days')),
-                            "location": block.get('campus')
-                        }
-                        schedule_items.append(schedule_item)
-
-                    section_data: SectionModel = {
-                        "sectionName": info.get('name'),
-                        "deliveryMethod": info.get('deliveryMethod'),
-                        "term": info.get('term'),
-                        "activity": section.get('sectionCode'),
-                        "credits": info.get('units'),
-                        "schedule": schedule_items
-                    }
-                    
-                    current_course["sections"].append(section_data)
+                        try:
+                            session = self._resolve_schedule_block(block)
+                            current_course["sessions"].append(session)
+                        except ValueError as e:
+                            # Log and continue to next block
+                            self.logger.warning(str(e))
+                            continue
                 
-                if current_course["sections"]:  # Only add courses with sections
+                if current_course["sessions"]:  # Only add courses with sessions
                     program["courses"].append(current_course)
             
             if program["courses"]:  # Only add programs with courses
                 programs.append(program)
 
         return {
+            "semester": f"{term.capitalize()} {year}",
             "programs": programs,
             "total_programs": len(programs),
             "total_courses": sum(len(p["courses"]) for p in programs),
             "total_sections": sum(
-                sum(len(c["sections"]) for c in p["courses"])
+                sum(len(c["sessions"]) for c in p["courses"])
                 for p in programs
             )
         }
