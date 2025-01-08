@@ -35,18 +35,18 @@ celery_app.conf.update(
 )
 
 # Celery Beat Schedule
-celery_app.conf.beat_schedule = {
-    'scrape-sfu-monthly': {
-        'task': 'app.tasks.scraper_task.run_scraper',
-        'schedule': crontab(0, 0, day_of_month='1'),  # Run at midnight on the 1st of every month
-        'args': ('simon_fraser_university',)
-    },
-    'scrape-ubc-monthly': {
-        'task': 'app.tasks.scraper_task.run_scraper',
-        'schedule': crontab(0, 0, day_of_month='1'),  # Run at midnight on the 1st of every month
-        'args': ('university_of_british_columbia',)
-    }
-}
+# celery_app.conf.beat_schedule = {
+#     'scrape-sfu-monthly': {
+#         'task': 'app.tasks.scraper_task.run_scraper',
+#         'schedule': crontab(0, 0, day_of_month='1'),  # Run at midnight on the 1st of every month
+#         'args': ('simon_fraser_university',)
+#     },
+#     'scrape-ubc-monthly': {
+#         'task': 'app.tasks.scraper_task.run_scraper',
+#         'schedule': crontab(0, 0, day_of_month='1'),  # Run at midnight on the 1st of every month
+#         'args': ('university_of_british_columbia',)
+#     }
+# }
 
 
 if __name__ == '__main__':
