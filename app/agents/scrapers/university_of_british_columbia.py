@@ -29,6 +29,13 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         
         self.logger.info(f"=== Start UBC scraper for {term} {year} ===")
         
+        # retrieve each html page for courses from ubc website
+        # https://github.com/KogoCampus/course-scraper-job/blob/dff5418512899a57492d697a596f9a6ab477ebf9/scrapers/ubc/ubcScraper.py
+
+        # parse each html page into json using self.llm_html_parser
+
+        # return data in foramt of models/course.py
+
         return {
             "semester": f"{term} {year}",
             "programs": [],
