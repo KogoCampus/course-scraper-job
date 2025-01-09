@@ -141,6 +141,14 @@ class SimonFraserUniversityScraper(BaseScraper):
                 continue
 
             for course in courses:
+                current_course: CourseModel = {
+                    "courseName": course.get('title'),
+                    "courseCode": f"{program['programCode']} {course.get('text')}",
+                    "professorName": None,  # Will be updated from detail
+                    "credit": None,  # Will be updated from detail
+                    "sessions": []
+                }
+
                 sections_url = f"{self.base_url}?{year}/{term}/{dept['value']}/{course['value']}"
                 sections = await self._fetch_json(sections_url)
                 
@@ -157,42 +165,71 @@ class SimonFraserUniversityScraper(BaseScraper):
                     if not detail:
                         continue
 
-                    # Create a new course entry for each section
-                    current_course: CourseModel = {
-                        "courseName": course.get('title'),
-                        "courseCode": f"{program['programCode']} {course.get('text')} {section.get('value')}",  # Include section in course code
-                        "professorName": None,
-                        "credit": int(detail.get('units')) if detail.get('units') else None,
-                        "sessions": []
+                    # Update course credit and professor if not set yet
+                    if current_course["credit"] is None and detail.get('units'):
+                        current_course["credit"] = int(detail.get('units'))
+
+                    if current_course["professorName"] is None:
+                        instructors = detail.get('instructor', [])
+                        if instructors:
+                            # Get primary instructor if available, otherwise first instructor
+                            primary_instructor = next(
+                                (i for i in instructors if i.get('roleCode') == 'PI'),
+                                instructors[0] if instructors else None
+                            )
+                            if primary_instructor:
+                                current_course["professorName"] = primary_instructor.get('name')
+
+                    # Create a new session for this section
+                    current_session: SessionModel = {
+                        "campus": None,
+                        "location": None,
+                        "schedules": []
                     }
 
-                    # Get professor name from instructor info
-                    instructors = detail.get('instructor', [])
-                    if instructors:
-                        # Get primary instructor if available, otherwise first instructor
-                        primary_instructor = next(
-                            (i for i in instructors if i.get('roleCode') == 'PI'),
-                            instructors[0] if instructors else None
-                        )
-                        if primary_instructor:
-                            current_course["professorName"] = primary_instructor.get('name')
-
-                    schedule = detail.get('courseSchedule', [])
-                    
-                    for block in schedule:
+                    schedule_blocks = detail.get('courseSchedule', [])
+                    for block in schedule_blocks:
                         if block.get('isExam'):  # Skip exam schedules
                             continue
 
                         try:
-                            session = self._resolve_schedule_block(block)
-                            current_course["sessions"].append(session)
+                            # Update session campus/location if not set
+                            if current_session["campus"] is None:
+                                current_session["campus"] = block.get('campus')
+
+                            # Parse schedule block
+                            start_date = self._parse_date_string(block.get('startDate', ''))
+                            end_date = self._parse_date_string(block.get('endDate', ''))
+                            
+                            # Parse time separately and combine with date
+                            if block.get('startTime'):
+                                start_time = datetime.strptime(block.get('startTime', ''), '%H:%M').time()
+                                start_timestamp = int(datetime.combine(start_date.date(), start_time).timestamp())
+                            else:
+                                start_timestamp = None
+                                
+                            if block.get('endTime'):
+                                end_time = datetime.strptime(block.get('endTime', ''), '%H:%M').time()
+                                end_timestamp = int(datetime.combine(end_date.date(), end_time).timestamp())
+                            else:
+                                end_timestamp = None
+
+                            schedule = {
+                                "days": self._parse_days(block.get('days')),
+                                "startTime": start_timestamp,
+                                "endTime": end_timestamp
+                            }
+                            current_session["schedules"].append(schedule)
+
                         except ValueError as e:
-                            # Log and continue to next block
                             self.logger.warning(str(e))
                             continue
+                    
+                    if current_session["schedules"]:  # Only add sessions with schedules
+                        current_course["sessions"].append(current_session)
                 
-                    if current_course["sessions"]:  # Only add courses with sessions
-                        program["courses"].append(current_course)
+                if current_course["sessions"]:  # Only add courses with sessions
+                    program["courses"].append(current_course)
             
             if program["courses"]:  # Only add programs with courses
                 programs.append(program)

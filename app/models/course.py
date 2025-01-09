@@ -10,12 +10,15 @@ class Day(str, Enum):
     SATURDAY = "sat"
     SUNDAY = "sun"
 
-class SessionModel(TypedDict):
-    campus: Optional[str]
-    location: Optional[str]
+class ScheduleModel(TypedDict):
     days: List[Day]
     startTime: Optional[int]         # unix timestamp
     endTime: Optional[int]           # unix timestamp
+
+class SessionModel(TypedDict):
+    campus: Optional[str]
+    location: Optional[str]
+    schedules: List[ScheduleModel]
 
 class CourseModel(TypedDict):
     courseName: Optional[str]        # e.g. "Operating Systems"

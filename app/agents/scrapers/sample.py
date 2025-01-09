@@ -10,17 +10,17 @@ from app.models.course import (
     ProgramModel,
     CourseModel,
     SessionModel,
+    ScheduleModel,
     CourseListingModel,
     Day
 )
 
 fake = Faker()
 
-class SessionFactory(factory.DictFactory):
+class ScheduleFactory(factory.DictFactory):
     class Meta:
-        model = SessionModel
+        model = ScheduleModel
 
-    location = factory.LazyFunction(lambda: random.choice(["Burnaby", "Surrey", "Vancouver"]))
     days = factory.LazyFunction(
         lambda: random.sample([
             Day.MONDAY,
@@ -43,6 +43,14 @@ class SessionFactory(factory.DictFactory):
         ).timestamp())
     )
 
+class SessionFactory(factory.DictFactory):
+    class Meta:
+        model = SessionModel
+
+    campus = factory.LazyFunction(lambda: random.choice(["Burnaby", "Surrey", "Vancouver"]))
+    location = factory.LazyFunction(lambda: f"Building {fake.random_letter().upper()}-{fake.random_int(min=1000, max=9999)}")
+    schedules = factory.LazyFunction(lambda: [ScheduleFactory() for _ in range(random.randint(1, 2))])  # 1-2 schedules per session
+
 class CourseFactory(factory.DictFactory):
     class Meta:
         model = CourseModel
@@ -53,7 +61,7 @@ class CourseFactory(factory.DictFactory):
     )
     professorName = factory.Faker('name')
     credit = factory.LazyFunction(lambda: random.choice([3, 4]))
-    sessions = factory.LazyFunction(lambda: [SessionFactory() for _ in range(random.randint(1, 3))])
+    sessions = factory.LazyFunction(lambda: [SessionFactory() for _ in range(random.randint(1, 3))])  # 1-3 sessions (sections) per course
 
 class ProgramFactory(factory.DictFactory):
     class Meta:
