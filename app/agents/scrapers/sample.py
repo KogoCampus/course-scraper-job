@@ -51,6 +51,7 @@ class CourseFactory(factory.DictFactory):
     courseCode = factory.LazyFunction(
         lambda: f"{fake.random_letter().upper()}{fake.random_letter().upper()}{fake.random_letter().upper()} {fake.random_int(min=100, max=499)}"
     )
+    professorName = factory.Faker('name')
     credit = factory.LazyFunction(lambda: random.choice([3, 4]))
     sessions = factory.LazyFunction(lambda: [SessionFactory() for _ in range(random.randint(1, 3))])
 

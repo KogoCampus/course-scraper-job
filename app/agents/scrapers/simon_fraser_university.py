@@ -144,6 +144,7 @@ class SimonFraserUniversityScraper(BaseScraper):
                 current_course: CourseModel = {
                     "courseName": course.get('title'),
                     "courseCode": f"{program['programCode']} {course.get('text')}",
+                    "professorName": None,  # Will be updated from detail
                     "credit": None,  # Credit info not available in API
                     "sessions": []
                 }
@@ -163,6 +164,17 @@ class SimonFraserUniversityScraper(BaseScraper):
                     
                     if not detail:
                         continue
+
+                    # Get professor name from instructor info
+                    instructors = detail.get('instructor', [])
+                    if instructors:
+                        # Get primary instructor if available, otherwise first instructor
+                        primary_instructor = next(
+                            (i for i in instructors if i.get('roleCode') == 'PI'),
+                            instructors[0] if instructors else None
+                        )
+                        if primary_instructor:
+                            current_course["professorName"] = primary_instructor.get('name')
 
                     schedule = detail.get('courseSchedule', [])
                     
