@@ -49,9 +49,6 @@ def run_scraper(self, school: str):
             "started_at": result["started_at"],
             "status": result["status"],
             "error": result.get("error", None),
-            "total_programs": data["total_programs"] if result["status"] == TaskStatus.SUCCESS else None,
-            "total_courses": data["total_courses"] if result["status"] == TaskStatus.SUCCESS else None,
-            "total_sections": data["total_sections"] if result["status"] == TaskStatus.SUCCESS else None
         }
 
         # Save task metadata
@@ -64,7 +61,7 @@ def run_scraper(self, school: str):
         
         # Save scraping results
         loop.run_until_complete(storage.save_data(
-            data=data["programs"],
+            data=data,
             task_name=self.name,
             file_name="course-listing.json",
             save_path_suffix=storage_save_path_suffix
