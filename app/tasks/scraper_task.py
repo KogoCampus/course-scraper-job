@@ -3,6 +3,7 @@ from celery_app import celery_app
 import logging
 import asyncio
 from io import StringIO
+from datetime import datetime
 
 from app.storage import get_storage_backend
 from app.agents.scrapers import get_scraper_class
@@ -41,7 +42,8 @@ def run_scraper(self, school: str):
 
         # Prepare metadata
         data = result["data"] if result["status"] == TaskStatus.SUCCESS else None
-        storage_save_path_suffix = [school, data["semester"], self.request.id]
+        current_time = datetime.now().strftime("%Y%m%d-%H%M%S")
+        storage_save_path_suffix = [school, data["semester"], f"{current_time}-{self.request.id}"]
         
         metadata = {
             "task_id": self.request.id,
