@@ -11,6 +11,7 @@ class Day(str, Enum):
     SUNDAY = "sun"
 
 class SessionModel(TypedDict):
+    campus: Optional[str]
     location: Optional[str]
     days: List[Day]
     startTime: Optional[int]         # unix timestamp

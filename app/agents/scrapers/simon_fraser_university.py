@@ -99,7 +99,7 @@ class SimonFraserUniversityScraper(BaseScraper):
                 end_timestamp = None
 
             return {
-                "location": block.get('campus'),
+                "campus": block.get('campus'),
                 "days": self._parse_days(block.get('days')),
                 "startTime": start_timestamp,
                 "endTime": end_timestamp
@@ -141,14 +141,6 @@ class SimonFraserUniversityScraper(BaseScraper):
                 continue
 
             for course in courses:
-                current_course: CourseModel = {
-                    "courseName": course.get('title'),
-                    "courseCode": f"{program['programCode']} {course.get('text')}",
-                    "professorName": None,  # Will be updated from detail
-                    "credit": None,  # Credit info not available in API
-                    "sessions": []
-                }
-
                 sections_url = f"{self.base_url}?{year}/{term}/{dept['value']}/{course['value']}"
                 sections = await self._fetch_json(sections_url)
                 
@@ -164,6 +156,15 @@ class SimonFraserUniversityScraper(BaseScraper):
                     
                     if not detail:
                         continue
+
+                    # Create a new course entry for each section
+                    current_course: CourseModel = {
+                        "courseName": course.get('title'),
+                        "courseCode": f"{program['programCode']} {course.get('text')} {section.get('value')}",  # Include section in course code
+                        "professorName": None,
+                        "credit": int(detail.get('units')) if detail.get('units') else None,
+                        "sessions": []
+                    }
 
                     # Get professor name from instructor info
                     instructors = detail.get('instructor', [])
@@ -190,8 +191,8 @@ class SimonFraserUniversityScraper(BaseScraper):
                             self.logger.warning(str(e))
                             continue
                 
-                if current_course["sessions"]:  # Only add courses with sessions
-                    program["courses"].append(current_course)
+                    if current_course["sessions"]:  # Only add courses with sessions
+                        program["courses"].append(current_course)
             
             if program["courses"]:  # Only add programs with courses
                 programs.append(program)
