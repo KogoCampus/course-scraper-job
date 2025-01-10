@@ -182,6 +182,7 @@ class SimonFraserUniversityScraper(BaseScraper):
 
                     # Create a new session for this section
                     current_session: SessionModel = {
+                        "sessionName": section.get('section'),
                         "campus": None,
                         "location": None,
                         "schedules": []

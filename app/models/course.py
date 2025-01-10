@@ -16,6 +16,7 @@ class ScheduleModel(TypedDict):
     endTime: Optional[int]           # unix timestamp
 
 class SessionModel(TypedDict):
+    sessionName: Optional[str]
     campus: Optional[str]
     location: Optional[str]
     schedules: List[ScheduleModel]
