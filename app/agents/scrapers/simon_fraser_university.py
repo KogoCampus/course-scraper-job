@@ -163,9 +163,6 @@ class SimonFraserUniversityScraper(BaseScraper):
                     continue
 
                 for section in sections:
-                    if section.get('classType') != 'e':
-                        continue
-
                     detail_url = f"{self.base_url}?{year}/{term}/{dept['value']}/{course['value']}/{section['value']}"
                     detail = await self._fetch_json(detail_url)
                     
