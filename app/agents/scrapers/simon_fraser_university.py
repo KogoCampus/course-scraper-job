@@ -174,7 +174,7 @@ class SimonFraserUniversityScraper(BaseScraper):
 
                     # Update course credit and professor if not set yet
                     if current_course["credit"] is None and detail.get('info', {}).get('units'):
-                        current_course["credit"] = int(detail.get('info', {}).get('units'))
+                        current_course["credit"] = float(detail.get('info', {}).get('units'))
 
                     if current_course["professorName"] is None:
                         instructors = detail.get('instructor', [])
@@ -239,7 +239,7 @@ class SimonFraserUniversityScraper(BaseScraper):
                 
                 if current_course["sessions"]:
                     program["courses"].append(current_course)
-                    self.logger.info(f"Processed course {course_count}: {current_course['courseCode']}")
+                    self.logger.info(f"Processed course: {current_course['courseCode']}")
             
             if program["courses"]:
                 programs.append(program)

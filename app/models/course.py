@@ -25,7 +25,7 @@ class CourseModel(TypedDict):
     courseName: Optional[str]        # e.g. "Operating Systems"
     courseCode: Optional[str]        # e.g. "CMPT 300 D100"
     professorName: Optional[str]     # e.g. "John Doe"
-    credit: Optional[int]
+    credit: Optional[float]          # Changed from Optional[int] to Optional[float]
     sessions: List[SessionModel]
 
 class ProgramModel(TypedDict):
