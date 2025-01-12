@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 import logging
+import pytz
 
 from .base import BaseScraper
 from app.models.course import (
@@ -15,6 +16,7 @@ class SimonFraserUniversityScraper(BaseScraper):
     def __init__(self, task_name: str, logger: logging.Logger):
         super().__init__(task_name, logger)
         self.base_url = "https://www.sfu.ca/bin/wcm/course-outlines"
+        self.pst_tz = pytz.timezone('America/Vancouver')
 
     def _determine_term(self) -> str:
         """Determine current term based on date"""
@@ -85,16 +87,20 @@ class SimonFraserUniversityScraper(BaseScraper):
             start_date = self._parse_date_string(block.get('startDate', ''))
             end_date = self._parse_date_string(block.get('endDate', ''))
             
-            # Parse time separately and combine with date
+            # Parse time separately and combine with date, handling PST/PDT timezone
             if block.get('startTime'):
                 start_time = datetime.strptime(block.get('startTime', ''), '%H:%M').time()
-                start_timestamp = int(datetime.combine(start_date.date(), start_time).timestamp())
+                start_dt = datetime.combine(start_date.date(), start_time)
+                start_dt_tz = self.pst_tz.localize(start_dt)
+                start_timestamp = int(start_dt_tz.timestamp())
             else:
                 start_timestamp = None
                 
             if block.get('endTime'):
                 end_time = datetime.strptime(block.get('endTime', ''), '%H:%M').time()
-                end_timestamp = int(datetime.combine(end_date.date(), end_time).timestamp())
+                end_dt = datetime.combine(end_date.date(), end_time)
+                end_dt_tz = self.pst_tz.localize(end_dt)
+                end_timestamp = int(end_dt_tz.timestamp())
             else:
                 end_timestamp = None
 
@@ -124,6 +130,7 @@ class SimonFraserUniversityScraper(BaseScraper):
             }
 
         programs: List[ProgramModel] = []
+        
         for dept in departments:
             if not dept.get('value'):
                 continue
@@ -144,8 +151,8 @@ class SimonFraserUniversityScraper(BaseScraper):
                 current_course: CourseModel = {
                     "courseName": course.get('title'),
                     "courseCode": f"{program['programCode']} {course.get('text')}",
-                    "professorName": None,  # Will be updated from detail
-                    "credit": None,  # Will be updated from detail
+                    "professorName": None,
+                    "credit": None,
                     "sessions": []
                 }
 
@@ -166,13 +173,12 @@ class SimonFraserUniversityScraper(BaseScraper):
                         continue
 
                     # Update course credit and professor if not set yet
-                    if current_course["credit"] is None and detail.get('units'):
-                        current_course["credit"] = int(detail.get('units'))
+                    if current_course["credit"] is None and detail.get('info', {}).get('units'):
+                        current_course["credit"] = int(detail.get('info', {}).get('units'))
 
                     if current_course["professorName"] is None:
                         instructors = detail.get('instructor', [])
                         if instructors:
-                            # Get primary instructor if available, otherwise first instructor
                             primary_instructor = next(
                                 (i for i in instructors if i.get('roleCode') == 'PI'),
                                 instructors[0] if instructors else None
@@ -182,7 +188,7 @@ class SimonFraserUniversityScraper(BaseScraper):
 
                     # Create a new session for this section
                     current_session: SessionModel = {
-                        "sessionName": section.get('section'),
+                        "sessionName": f"{section.get('sectionCode', '')} {section.get('text', '')}".strip(),
                         "campus": None,
                         "location": None,
                         "schedules": []
@@ -190,11 +196,10 @@ class SimonFraserUniversityScraper(BaseScraper):
 
                     schedule_blocks = detail.get('courseSchedule', [])
                     for block in schedule_blocks:
-                        if block.get('isExam'):  # Skip exam schedules
+                        if block.get('isExam'):
                             continue
 
                         try:
-                            # Update session campus/location if not set
                             if current_session["campus"] is None:
                                 current_session["campus"] = block.get('campus')
 
@@ -202,16 +207,19 @@ class SimonFraserUniversityScraper(BaseScraper):
                             start_date = self._parse_date_string(block.get('startDate', ''))
                             end_date = self._parse_date_string(block.get('endDate', ''))
                             
-                            # Parse time separately and combine with date
                             if block.get('startTime'):
                                 start_time = datetime.strptime(block.get('startTime', ''), '%H:%M').time()
-                                start_timestamp = int(datetime.combine(start_date.date(), start_time).timestamp())
+                                start_dt = datetime.combine(start_date.date(), start_time)
+                                start_dt_tz = self.pst_tz.localize(start_dt)
+                                start_timestamp = int(start_dt_tz.timestamp())
                             else:
                                 start_timestamp = None
                                 
                             if block.get('endTime'):
                                 end_time = datetime.strptime(block.get('endTime', ''), '%H:%M').time()
-                                end_timestamp = int(datetime.combine(end_date.date(), end_time).timestamp())
+                                end_dt = datetime.combine(end_date.date(), end_time)
+                                end_dt_tz = self.pst_tz.localize(end_dt)
+                                end_timestamp = int(end_dt_tz.timestamp())
                             else:
                                 end_timestamp = None
 
@@ -226,13 +234,14 @@ class SimonFraserUniversityScraper(BaseScraper):
                             self.logger.warning(str(e))
                             continue
                     
-                    if current_session["schedules"]:  # Only add sessions with schedules
+                    if current_session["schedules"]:
                         current_course["sessions"].append(current_session)
                 
-                if current_course["sessions"]:  # Only add courses with sessions
+                if current_course["sessions"]:
                     program["courses"].append(current_course)
+                    self.logger.info(f"Processed course {course_count}: {current_course['courseCode']}")
             
-            if program["courses"]:  # Only add programs with courses
+            if program["courses"]:
                 programs.append(program)
 
         return {

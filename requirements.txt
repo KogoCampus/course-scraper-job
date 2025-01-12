@@ -11,3 +11,4 @@ pyyaml
 asyncio
 Faker==22.6.0
 factory-boy==3.3.0
+pytz==2024.1
