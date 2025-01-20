@@ -27,7 +27,8 @@ sudo docker compose up --build
 curl -X POST \
   'http://localhost:5555/api/task/async-apply/scraper_task' \
   -u "admin:password" \
-  -d '{"args": ["task_name"]}'
+  -H "Content-Type: application/json" \
+  -d '{"args": ["university_of_british_columbia"]}'
 ```
 for example:
 ```bash

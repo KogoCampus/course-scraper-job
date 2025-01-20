@@ -6,6 +6,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
+    wget \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app user and group with specific UID/GID
@@ -16,12 +18,13 @@ RUN groupadd -r scraper && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install Playwright and browsers as root
+RUN playwright install --with-deps chromium && \
+    mkdir -p /home/scraper/.cache && \
+    chown -R scraper:scraper /home/scraper/.cache
+
 # Copy project files
 COPY . .
-
-# Install Playwright browser
-RUN playwright install chromium && \
-    playwright install-deps
 
 # Make entrypoint executable
 COPY entrypoint.sh /entrypoint.sh
@@ -37,4 +40,4 @@ RUN chown -R scraper:scraper /app
 # Switch to scraper user
 USER scraper
 
-ENTRYPOINT ["/entrypoint.sh"] 
+ENTRYPOINT ["/entrypoint.sh"]
