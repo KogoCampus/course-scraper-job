@@ -28,7 +28,7 @@ curl -X POST \
   'http://localhost:5555/api/task/async-apply/scraper_task' \
   -u "admin:password" \
   -H "Content-Type: application/json" \
-  -d '{"args": ["university_of_british_columbia"]}'
+  -d '{"args": ["task_name"]}'
 ```
 for example:
 ```bash
