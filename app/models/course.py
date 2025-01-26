@@ -15,11 +15,18 @@ class ScheduleModel(TypedDict):
     startTime: Optional[int]         # unix timestamp
     endTime: Optional[int]           # unix timestamp
 
+class ChildSessionModel(TypedDict):
+    childSessionName: Optional[str]
+    campus: Optional[str]
+    location: Optional[str]
+    schedules: List[ScheduleModel]
+
 class SessionModel(TypedDict):
     sessionName: Optional[str]
     campus: Optional[str]
     location: Optional[str]
     schedules: List[ScheduleModel]
+    childSession: List[ChildSessionModel] # If child session exists, user must pick one. e.g. LEC D100 + TUT 001
 
 class CourseModel(TypedDict):
     courseName: Optional[str]        # e.g. "Operating Systems"

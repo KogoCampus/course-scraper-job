@@ -24,7 +24,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         #     return "Winter"  # UBC uses Winter for Fall term
         return "SampleTerm"
     
-    async def setupPage(page):
+    async def setupPage(self, page):
         # selecting options (terms and campus location)
         await page.wait_for_selector('.m-menu-toggle')
         await page.locator('.m-menu-toggle').click()
@@ -81,7 +81,6 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
 
                 for j in range(0, len(subjects), 1):
                     currentName = await subjects[j].inner_text()
-                    print(currentName)
                     self.logger.info(currentName)
                     
                     if currentName != prevName:
@@ -127,8 +126,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                                 sections = await page.locator('.course-sections-box').all()
                                 for s in sections:
                                     section = await s.inner_html()
-                                    parser = BaseScraper._get_llm_html_parser()
-                                    out = await parser.parse_html_to_json_list(section, [])
+                                    out = await self.llm_html_parser.parse_html_to_json_list(section, [])
                                     currentCourse['sections'].extend(out)
 
                             # print(currentCourse)    

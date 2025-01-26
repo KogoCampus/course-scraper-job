@@ -21,8 +21,19 @@ sudo docker compose up --build
 - Celery Beat: http://localhost:8000/
 
 
-## Triggering Tasks Manually via CLI (Local Testing)
+## Triggering Tasks Manually
 
+### Using CLI Tool (Local Development)
+For local development and testing, you can use the `run_task.py` script to run scrapers directly:
+```bash
+python run_task.py <task_argument>
+
+# Example:
+python run_task.py sample  # Runs the sample scraper
+```
+
+### Using Flower API
+For production environment, you can trigger tasks via the Flower API:
 ```bash
 curl -X POST \
   'http://localhost:5555/api/task/async-apply/scraper_task' \

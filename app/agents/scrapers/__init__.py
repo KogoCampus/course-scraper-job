@@ -2,7 +2,7 @@ from typing import Type
 from .base import BaseScraper
 from .simon_fraser_university import SimonFraserUniversityScraper
 from .sample import SampleScraper
-from .university_of_british_columbia import UniversityOfBritishColumbiaScraper
+from .university_of_british_columbia import *
 
 SCRAPER_MAP = {
     'sample': SampleScraper,

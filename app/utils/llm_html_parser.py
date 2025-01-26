@@ -27,6 +27,11 @@ class LlmHtmlParser:
     async def _parse_html(self, html: str, prompts: List[str], expect_array: bool = False) -> Dict | List[Dict]:
         """Generic HTML parsing method that handles both single objects and lists"""
         try:
+            # Print preview of input HTML
+            html_preview = html[:100] + "..." if len(html) > 100 else html
+            logger.info(f"Input HTML to LLM: {html_preview}")
+            
+            logger.info("Parsing html by LLM...")
             response = await acompletion(
                 model=self.model,
                 messages=self._create_messages(html, prompts, expect_array),
@@ -41,6 +46,10 @@ class LlmHtmlParser:
             expected_type = list if expect_array else dict
             if not isinstance(parsed_data, expected_type):
                 raise Exception(f"Unexpected response format: {type(parsed_data)}")
+            
+            # Print preview of the parsed response
+            preview = str(parsed_data)[:50] + "..." if len(str(parsed_data)) > 50 else str(parsed_data)
+            logger.info(f"LLM Response: {preview}")
             
             return parsed_data
         except Exception as e:
