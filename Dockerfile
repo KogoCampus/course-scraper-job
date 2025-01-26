@@ -1,40 +1,25 @@
-FROM python:3.11-slim
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create app user and group with specific UID/GID
-RUN groupadd -r scraper && \
-    useradd -r -g scraper -u 1000 scraper
+RUN pip install --no-cache-dir setuptools
 
 # Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
 COPY . .
 
-# Install Playwright browser
-RUN playwright install chromium && \
-    playwright install-deps
-
-# Make entrypoint executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Ensure environment file is present and readable
-RUN chown scraper:scraper .env && \
+RUN chown pwuser:pwuser .env && \
     chmod 600 .env
 
-# Ensure all files are owned by scraper user
-RUN chown -R scraper:scraper /app
+# Ensure all files are owned by pwuser
+RUN chown -R pwuser:pwuser /app
 
-# Switch to scraper user
-USER scraper
+# Switch to pwuser (pre-configured in the Playwright image)
+USER pwuser
 
-ENTRYPOINT ["/entrypoint.sh"] 
+ENTRYPOINT ["/entrypoint.sh"]

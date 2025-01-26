@@ -17,15 +17,12 @@ class BaseScraper(ABC):
         # Scraper Utilities
         self.logger = logger
         self.http = self._get_http_client()
-        self.llm_html_parser = self._get_llm_html_parser()
+        self.llm_html_parser = LlmHtmlParser()
         # ================================================
-        
+    
     def _get_http_client(self):  
         return httpx.AsyncClient()
 
-    def _get_llm_html_parser(self) -> LlmHtmlParser:
-        return LlmHtmlParser()
-    
     @abstractmethod
     async def fetch_courses(self) -> CourseListingModel:
         """Fetch raw course data from source"""

@@ -86,4 +86,3 @@ def run_scraper(self, school: str):
         # Clean up
         logger.removeHandler(handler)
         log_buffer.close()
-            
