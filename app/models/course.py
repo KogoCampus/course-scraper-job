@@ -48,21 +48,3 @@ class CourseListingModel(TypedDict):
     total_programs: int
     total_courses: int
     total_sections: int
-
-
-[
-    {
-        'sessionName': 'ADHE_V 327-63D', 
-        'sessionType': 'Lecture', 
-        'campus': 'Vancouver', 
-        'location': None, 
-        'schedules': [
-            {
-                'days': None, 
-                'startTime': None, 
-                'endTime': None
-            }
-        ], 
-        'childSession': []    
-    }
-]
