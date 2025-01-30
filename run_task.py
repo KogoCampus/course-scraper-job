@@ -20,4 +20,4 @@ if __name__ == "__main__":
         
     school = sys.argv[1]
     # Run the Celery task directly without going through the Celery worker
-    run_scraper.apply(args=[school]).get()
+    run_scraper.apply(args=[school, 25]).get()

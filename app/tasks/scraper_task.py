@@ -14,7 +14,7 @@ class ScraperTask(Task):
     abstract = True
 
 @celery_app.task(base=ScraperTask, name='scraper_task', bind=True)
-def run_scraper(self, school: str):
+def run_scraper(self, school: str, pageNum=-1):
     """Run scraper for specified school"""
     # Setup storage
     storage = get_storage_backend(settings)
@@ -36,7 +36,8 @@ def run_scraper(self, school: str):
         
         # Run the async code in an event loop
         loop = asyncio.get_event_loop()
-        result = loop.run_until_complete(scraper.run())
+        print(pageNum)
+        result = loop.run_until_complete(scraper.run(index=pageNum))
 
         if result["status"] != TaskStatus.SUCCESS: raise Exception(result["error"])
 
@@ -47,7 +48,7 @@ def run_scraper(self, school: str):
         
         metadata = {
             "task_id": self.request.id,
-            "task_name": self.name,
+            "task_name": self.name + "-" + str(pageNum),
             "started_at": result["started_at"],
             "status": result["status"],
             "error": result.get("error", None),
@@ -56,7 +57,7 @@ def run_scraper(self, school: str):
         # Save task metadata
         loop.run_until_complete(storage.save_data(
             data=metadata,
-            task_name=self.name,
+            task_name=self.name + "-" + str(pageNum),
             file_name="metadata.json",
             save_path_suffix=storage_save_path_suffix
         ))
@@ -64,7 +65,7 @@ def run_scraper(self, school: str):
         # Save scraping results
         loop.run_until_complete(storage.save_data(
             data=data,
-            task_name=self.name,
+            task_name=self.name + "-" + str(pageNum),
             file_name="course-listing.json",
             save_path_suffix=storage_save_path_suffix
         ))
@@ -75,7 +76,7 @@ def run_scraper(self, school: str):
             loop.run_until_complete(storage.save_data(
                 data=log_content,
                 file_name="worker.log",
-                task_name=self.name,
+                task_name=self.name + "-" + str(pageNum),
                 save_path_suffix=storage_save_path_suffix
             ))
             

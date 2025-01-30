@@ -17,12 +17,14 @@ class ScheduleModel(TypedDict):
 
 class ChildSessionModel(TypedDict):
     childSessionName: Optional[str]
+    childSessionType: Optional[str]
     campus: Optional[str]
     location: Optional[str]
     schedules: List[ScheduleModel]
 
 class SessionModel(TypedDict):
     sessionName: Optional[str]
+    sessionType: Optional[str]
     campus: Optional[str]
     location: Optional[str]
     schedules: List[ScheduleModel]
@@ -46,3 +48,21 @@ class CourseListingModel(TypedDict):
     total_programs: int
     total_courses: int
     total_sections: int
+
+
+[
+    {
+        'sessionName': 'ADHE_V 327-63D', 
+        'sessionType': 'Lecture', 
+        'campus': 'Vancouver', 
+        'location': None, 
+        'schedules': [
+            {
+                'days': None, 
+                'startTime': None, 
+                'endTime': None
+            }
+        ], 
+        'childSession': []    
+    }
+]

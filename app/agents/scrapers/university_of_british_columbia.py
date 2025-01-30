@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from playwright.async_api import async_playwright
 import logging
 
@@ -16,34 +17,43 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         """Determine current term based on date"""
         month = datetime.now().month
         
-        # if 1 <= month <= 4:
-        #     return "Winter"
-        # elif 5 <= month <= 8:
-        #     return "Summer"
-        # else:  # 9 <= month <= 12
-        #     return "Winter"  # UBC uses Winter for Fall term
+        if 1 <= month <= 4:
+            return "Winter"
+        elif 5 <= month <= 8:
+            return "Summer"
+        else:  # 9 <= month <= 12
+            return "Winter"  # UBC uses Winter for Fall term
         return "SampleTerm"
     
-    async def setupPage(self, page):
+    async def setupPage(self, page, pageNum):
         # selecting options (terms and campus location)
         await page.wait_for_selector('.m-menu-toggle')
         await page.locator('.m-menu-toggle').click()
 
         await page.wait_for_selector('.menu-campus-session__tab-btn')
 
+        # select sem
         await page.locator('.menu-campus-session__tab-btn:nth-of-type(2)').click()
-
+        
+        # 1 - up-upcoming sem
+        # 2 - upcoming sem
+        # 3 - current sem
+        # 4 - prev sem
         await page.locator('.menu-campus-session__menu-link:nth-of-type(3)').click()
 
         await page.wait_for_selector('#subjects-table td')
 
+        for x in range(0, pageNum):
+            await page.wait_for_selector('#subjects-table')
+            await page.locator('#pagination-next').click()
 
-    async def fetch_courses(self) -> CourseListingModel:
+
+    async def fetch_courses(self, pageNum) -> CourseListingModel:
         """Fetch course data from UBC API"""
         year = datetime.now().year
         term = self._determine_term()
         
-        self.logger.info(f"=== Start UBC scraper for {term} {year} ===")
+        self.logger.info(f"=== Start UBC scraper for {term} {year} in page {pageNum}===")
         
         # retrieve each html page for courses from ubc website
         # https://github.com/KogoCampus/course-scraper-job/blob/dff5418512899a57492d697a596f9a6ab477ebf9/scrapers/ubc/ubcScraper.py
@@ -57,7 +67,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                 "height": 800,
             })
             await page.goto(self.base_url)
-            await self.setupPage(page)
+            await self.setupPage(page, pageNum)
 
             failed = []
             await page.wait_for_selector('#subjects-table')
@@ -68,96 +78,130 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
 
             prevName = ""
 
-            stop = False
             i = 0
 
-            while(not stop):
-                if i != 0:
-                    await page.wait_for_selector('main')
-                    await page.locator('#pagination-next').click()
+            if i != 0:
+                await page.wait_for_selector('main')
+                await page.locator('#pagination-next').click()
 
-                self.logger.info(f'Page {i+1}')
-                subjects = await page.locator('td[data-colindex="0"] a').all()
+            self.logger.info(f'Page {i+1}')
+            subjects = await page.locator('td[data-colindex="0"] a').all()
 
-                for j in range(0, len(subjects), 1):
-                    currentName = await subjects[j].inner_text()
-                    self.logger.info(currentName)
+            for j in range(0, len(subjects), 1):
+                currentName = await subjects[j].inner_text()
+                self.logger.info(currentName)
+                
+                if currentName != prevName:
+                    prevName = currentName
+                    await subjects[j].click()
+                    try:
+                        await page.wait_for_selector('.subjects-courses', timeout=20000)
+                    except:
+                        self.logger.info(f"{currentName} reload")
+                        failed.append(currentName)
+
+                    currentProgram = {
+                        "programName": "",
+                        "programCode": "",
+                        "courses": [],
+                    }
                     
-                    if currentName != prevName:
-                        prevName = currentName
-                        await subjects[j].click()
-                        try:
-                            await page.wait_for_selector('.subjects-courses', timeout=20000)
-                        except:
-                            self.logger.info(f"{currentName} reload")
-                            failed.append(currentName)
+                    await page.query_selector('.subjects-courses')
+                    currentCode = await (await page.query_selector('.l-node h1')).inner_html()
+                    currentProgram['programName'] = currentName
+                    currentProgram['programCode'] = currentCode.split('-', 1)[1].strip()
+                    currentCourse = {
+                        "courseName": "",
+                        "courseCode": "",
+                        "sessions": []
+                    }
 
-                        currentProgram = {
-                            "programName": "",
-                            "programCode": "",
-                            "courses": [],
-                        }
-                        
-                        await page.query_selector('.subjects-courses')
-                        currentCode = await (await page.query_selector('.l-node h1')).inner_html()
-                        currentProgram['programName'] = currentName
-                        currentProgram['programCode'] = currentCode.split('-', 1)[1].strip()
+                    courses = await page.locator('td[data-colindex="0"] a').all()
+                    for k in courses:
+                        await k.click()
+                        await page.wait_for_selector('.course-view')
                         currentCourse = {
                             "courseName": "",
                             "courseCode": "",
-                            "sections": []
+                            "credit": 0,
+                            "sessions": []
                         }
 
-                        courses = await page.locator('td[data-colindex="0"] a').all()
-                        for k in courses:
-                            await k.click()
-                            await page.wait_for_selector('.course-view')
-                            currentCourse = {
-                                "courseName": "",
-                                "courseCode": "",
-                                "sections": []
-                            }
+                        courseName = await (await page.query_selector('.l-node__title')).inner_text()
+                        credit = await (await page.query_selector('.course-view__detail-title')).inner_text()
+                        currentCourse['credit'] = credit.split('-')[1].strip()
+                        currentCourse['courseCode'] = courseName.split('-', 1)[0].strip()
+                        currentCourse['courseName'] = courseName.split('-', 1)[1].strip()
+                        html = await page.query_selector('.course-view__tables')
+                        if html:
+                            sessions = await page.locator('.course-sections-box').all()
+                            sessionIndex = 0
+                            for s in sessions:
+                                session = await s.inner_html()
+                                if sessionIndex == 0:
+                                    prompts = [
+                                        "Parse this HTML section into a list of course sessions. Each session should have:",
+                                        "- sessionName: The section code/name (e.g., 'L1A', 'LAB 2', etc.)",
+                                        "- sessionType: The activity of the section (e.g., 'Lecture' or 'Seminar' or 'Thesis' or 'Independent Study', etc)"
+                                        "- campus: This value must always be 'Vancouver'",
+                                        "- location: The room/building location (null if not available)",
+                                        "- schedules: A list of schedule objects, each containing:",
+                                        "  - days: List of days as ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']",
+                                        "  - startTime: Unix timestamp for start time (null if not available)",
+                                        "  - endTime: Unix timestamp for end time (null if not available)",
+                                        "- childSession: An empty list"
+                                    ]
+                                else:
+                                    prompts = [
+                                        "Parse this HTML section into a list of course sessions. If sessionType is 'Lecture' or 'Seminar' or 'Thesis' or 'Independent Study', each session should have:",
+                                        "- sessionName: The section code/name (e.g., 'L1A', 'LAB 2', etc.)",
+                                        "- sessionType: The activity of the section (e.g., 'Lecture' or 'Seminar' or 'Thesis' or 'Independent Study')"
+                                        "- campus: This value must always be 'Vancouver'",
+                                        "- location: The room/building location (null if not available)",
+                                        "- schedules: A list of schedule objects, each containing:",
+                                        "  - days: List of days as ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']",
+                                        "  - startTime: Unix timestamp for start time (null if not available)",
+                                        "  - endTime: Unix timestamp for end time (null if not available)",
+                                        "- childSession: An empty list"
+                                        "If sessionType is other than 'Lecture' or 'Seminar' or 'Thesis' or 'Independent Study',",
+                                        "change'sessionName' to 'childSessionName' and 'sessionType' must be 'childSessionType'",
+                                        "and no need for childSession",
+                                    ]
+                                out = await self.llm_html_parser.parse_html_to_json_list(session, prompts)
+                                self.logger.info(out)
+                                if "childSessionName" in out[0]:
+                                    for s in currentCourse.get('sessions'):
+                                        if "sessionName" in s:
+                                            self.logger.info(s)
+                                            s['childSession'].extend(out)
+                                else:
+                                    currentCourse['sessions'].extend(out)
+                                sessionIndex += 1
 
-                            courseName = await (await page.query_selector('.l-node__title')).inner_text()
-                            currentCourse['courseCode'] = courseName.split('-', 1)[0].strip()
-                            currentCourse['courseName'] = courseName.split('-', 1)[1].strip()
-                            html = await page.query_selector('.course-view__tables')
-                            if html:
-                                sections = await page.locator('.course-sections-box').all()
-                                for s in sections:
-                                    section = await s.inner_html()
-                                    out = await self.llm_html_parser.parse_html_to_json_list(section, [])
-                                    currentCourse['sections'].extend(out)
-
-                            # print(currentCourse)    
-                            currentProgram['courses'].append(currentCourse)
-                            await page.go_back()
-                            courses = await page.locator('td[data-colindex="0"] a').all()
-                        
+                        currentProgram['courses'].append(currentCourse)
                         await page.go_back()
-                        self.data.append(currentProgram)
-                        await page.wait_for_selector('td[data-colindex="0"] a')
-                        isFirstPage = await page.evaluate("""
-                            async () => {
-                                return document.querySelector('td[data-colindex="0"] a').textContent
-                            }
-                        """)
-                        
-                        if isFirstPage == firstName and i != 0:
-                            await page.goto(self.base_url)
-                            await self.setupPage(page)
-                            for x in range(0, i):
-                                await page.wait_for_selector('#subjects-table')
-                                await page.locator('#pagination-next').click()
-                        
-                        await page.wait_for_selector('td[data-colindex="0"] a')
-                        subjects = await page.locator('td[data-colindex="0"] a').all()
-                
-                i += 1
-                pageNumber = (await (await page.query_selector('tfoot p')).inner_text()).split('-')[1].split(' ')
-                if pageNumber[0] == pageNumber[2]:
-                    stop = True
-                courseName = await (await page.query_selector('.l-node__title')).inner_text()
+                        courses = await page.locator('td[data-colindex="0"] a').all()
+                    
+                    await page.go_back()
+                    self.data.append(currentProgram)
+                    await page.wait_for_selector('td[data-colindex="0"] a')
+                    isFirstPage = await page.evaluate("""
+                        async () => {
+                            return document.querySelector('td[data-colindex="0"] a').textContent
+                        }
+                    """)
+                    if isFirstPage != firstName and pageNum != 0:
+                        await page.goto(self.base_url)
+                        await self.setupPage(page, pageNum)
+                    
+                    await page.wait_for_selector('td[data-colindex="0"] a')
+                    subjects = await page.locator('td[data-colindex="0"] a').all()
+            
+            i += 1
+            pageNumber = (await (await page.query_selector('tfoot p')).inner_text()).split('-')[1].split(' ')
+            if pageNumber[0] == pageNumber[2]:
+                stop = True
+            courseName = await (await page.query_selector('.l-node__title')).inner_text()
 
             await browser.close()
 

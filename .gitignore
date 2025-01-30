@@ -43,3 +43,4 @@ local/
 .docker/ 
 
 celerybeat-schedule
+demo.Python
