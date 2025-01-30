@@ -14,10 +14,9 @@ Example:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python run_task.py <school>")
+        print("Usage: python run_task.py task_name")
         print("Example: python run_task.py sample")
         sys.exit(1)
         
-    school = sys.argv[1]
     # Run the Celery task directly without going through the Celery worker
-    run_scraper.apply(args=[school]).get()
+    run_scraper.apply(args=sys.argv[1]).get()
