@@ -19,4 +19,5 @@ if __name__ == "__main__":
         sys.exit(1)
         
     # Run the Celery task directly without going through the Celery worker
-    run_scraper.apply(args=sys.argv[1]).get()
+    print(sys.argv[1])
+    run_scraper.apply(args=[sys.argv[1]]).get()
