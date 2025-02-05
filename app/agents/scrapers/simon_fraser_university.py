@@ -151,7 +151,6 @@ class SimonFraserUniversityScraper(BaseScraper):
                 current_course: CourseModel = {
                     "courseName": course.get('title'),
                     "courseCode": f"{program['programCode']} {course.get('text')}",
-                    "professorName": None,
                     "credit": None,
                     "sessions": []
                 }
@@ -169,29 +168,31 @@ class SimonFraserUniversityScraper(BaseScraper):
                     if not detail:
                         continue
 
-                    # Update course credit and professor if not set yet
-                    if current_course["credit"] is None and detail.get('info', {}).get('units'):
-                        current_course["credit"] = float(detail.get('info', {}).get('units'))
-
-                    if current_course["professorName"] is None:
-                        instructors = detail.get('instructor', [])
-                        if instructors:
-                            primary_instructor = next(
-                                (i for i in instructors if i.get('roleCode') == 'PI'),
-                                instructors[0] if instructors else None
-                            )
-                            if primary_instructor:
-                                current_course["professorName"] = primary_instructor.get('name')
-
                     # Create a new session for this section
                     current_session: SessionModel = {
                         "sessionName": f"{section.get('sectionCode', '')} {section.get('text', '')}".strip(),
+                        "professorName": None,
                         "campus": None,
                         "location": None,
                         "schedules": []
                     }
 
                     schedule_blocks = detail.get('courseSchedule', [])
+                    
+                    # Set professor name for this session
+                    instructors = detail.get('instructor', [])
+                    if instructors:
+                        primary_instructor = next(
+                            (i for i in instructors if i.get('roleCode') == 'PI'),
+                            instructors[0] if instructors else None
+                        )
+                        if primary_instructor:
+                            current_session["professorName"] = primary_instructor.get('name')
+
+                    # Update course credit if not set yet
+                    if current_course["credit"] is None and detail.get('info', {}).get('units'):
+                        current_course["credit"] = float(detail.get('info', {}).get('units'))
+
                     for block in schedule_blocks:
                         if block.get('isExam'):
                             continue
