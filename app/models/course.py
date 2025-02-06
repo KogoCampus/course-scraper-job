@@ -23,7 +23,8 @@ class ChildSessionModel(TypedDict):
     schedules: List[ScheduleModel]
 
 class SessionModel(TypedDict):
-    sessionName: Optional[str]
+    professorName: Optional[str]     # e.g. "John Doe"
+    sessionName: Optional[str]       # e.g. LEC, TUT, SEM, etc
     sessionType: Optional[str]
     campus: Optional[str]
     location: Optional[str]
@@ -33,7 +34,6 @@ class SessionModel(TypedDict):
 class CourseModel(TypedDict):
     courseName: Optional[str]        # e.g. "Operating Systems"
     courseCode: Optional[str]        # e.g. "CMPT 300 D100"
-    professorName: Optional[str]     # e.g. "John Doe"
     credit: Optional[float]          # Changed from Optional[int] to Optional[float]
     sessions: List[SessionModel]
 

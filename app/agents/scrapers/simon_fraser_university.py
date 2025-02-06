@@ -4,7 +4,7 @@ import logging
 import pytz
 
 from .base import BaseScraper
-from app.models.course import ProgramModel, CourseModel, SessionModel, CourseListingModel, Day
+from app.models.course import ProgramModel, CourseModel, SessionModel, CourseListingModel, Day, ChildSessionModel
 
 class SimonFraserUniversityScraper(BaseScraper):
     def __init__(self, task_name: str, logger: logging.Logger):
@@ -91,21 +91,63 @@ class SimonFraserUniversityScraper(BaseScraper):
             raise Exception(f"Failed to parse schedule block: {str(e)}") from e
 
     def _organize_sessions(self, sessions: List[SessionModel]) -> List[SessionModel]:
-        main_sessions = []
-        subsessions = []
+        lecture_sessions = []
+        child_sessions = []
+        
         for session in sessions:
             sname = session.get("sessionName", "")
             if sname.upper().startswith("LEC"):
-                main_sessions.append(session)
-            elif sname.upper().startswith("TUT") or sname.upper().startswith("LAB"):
-                subsessions.append(session)
+                session["sessionType"] = "Lecture"
+                session["childSession"] = []  # Initialize empty child session list
+                lecture_sessions.append(session)
+            elif sname.upper().startswith("TUT"):
+                child_session: ChildSessionModel = {
+                    "childSessionName": session.get("sessionName"),
+                    "childSessionType": "Tutorial",
+                    "campus": session.get("campus"),
+                    "location": session.get("location"),
+                    "schedules": session.get("schedules", [])
+                }
+                child_sessions.append(child_session)
+            elif sname.upper().startswith("LAB"):
+                child_session: ChildSessionModel = {
+                    "childSessionName": session.get("sessionName"),
+                    "childSessionType": "Laboratory",
+                    "campus": session.get("campus"),
+                    "location": session.get("location"),
+                    "schedules": session.get("schedules", [])
+                }
+                child_sessions.append(child_session)
             else:
-                main_sessions.append(session)
-        if main_sessions and subsessions:
-            for main in main_sessions:
-                main["subsessions"] = subsessions
-            return main_sessions
-        return sessions
+                # For other types of sessions (seminars, etc)
+                session["sessionType"] = "Other"
+                session["childSession"] = []
+                lecture_sessions.append(session)
+
+        # If we have both lectures and child sessions, attach child sessions to lectures
+        if lecture_sessions and child_sessions:
+            for lecture in lecture_sessions:
+                lecture["childSession"] = child_sessions
+            return lecture_sessions
+        
+        # If we only have lectures or other sessions without children
+        if lecture_sessions:
+            return lecture_sessions
+        
+        # If we somehow only have child sessions, convert them to regular sessions
+        converted_sessions = []
+        for child in child_sessions:
+            session: SessionModel = {
+                "sessionName": child["childSessionName"],
+                "sessionType": child["childSessionType"],
+                "professorName": None,
+                "campus": child["campus"],
+                "location": child["location"],
+                "schedules": child["schedules"],
+                "childSession": []
+            }
+            converted_sessions.append(session)
+        return converted_sessions
 
     async def fetch_courses(self) -> CourseListingModel:
         year = datetime.now().year
@@ -151,10 +193,12 @@ class SimonFraserUniversityScraper(BaseScraper):
                         continue
                     current_session: SessionModel = {
                         "sessionName": f"{section.get('sectionCode', '')} {section.get('text', '')}".strip(),
+                        "sessionType": None,  # Will be set in _organize_sessions
                         "professorName": None,
                         "campus": None,
                         "location": None,
-                        "schedules": []
+                        "schedules": [],
+                        "childSession": []  # Initialize empty child session list
                     }
                     schedule_blocks = detail.get('courseSchedule', [])
                     instructors = detail.get('instructor', [])
