@@ -87,7 +87,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         window = 4
 
         async with async_playwright() as p:
-            browser = await p.chromium.launch()
+            browser = await p.webkit.launch()
             page = await browser.new_page()
             await page.set_viewport_size({
                 "width": 500,
@@ -113,6 +113,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
             
             # for i in range(remainder):
             #     self.fetch_courses_e(page=page, pageNum=i+(window * itr))
+            await page.close()
             await browser.close()
         
         year = datetime.now().year
@@ -149,7 +150,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
 
         # parse each html page into json using self.llm_html_parser
         async with async_playwright() as p2:
-            browser = await p2.chromium.launch()
+            browser = await p2.webkit.launch()
             page = await browser.new_page()
             await page.set_viewport_size({
                 "width": 500,
@@ -158,7 +159,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
 
             page.set_default_timeout = 60000
             page.set_default_navigation_timeout = 60000
-            
+
             await page.goto(self.base_url)
             await self.setupPage(page, pageNum)
 
@@ -302,7 +303,8 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                 if pageNumber[0] == pageNumber[2]:
                     stop = True
                 courseName = await (await page.query_selector('.l-node__title')).inner_text()
-
+                
+            await page.close()
             await browser.close()
 
         # return data in foramt of models/course.py
