@@ -93,6 +93,10 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                 "width": 500,
                 "height": 800,
             })
+
+            page.set_default_timeout = 60000
+            page.set_default_navigation_timeout = 60000
+
             await page.goto(self.base_url)
             await page.wait_for_selector('#subjects-table')
             pagination = (await page.locator('.MuiTablePagination-displayedRows').inner_html()).split(' of')
@@ -151,8 +155,10 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                 "width": 500,
                 "height": 800,
             })
+
             page.set_default_timeout = 60000
             page.set_default_navigation_timeout = 60000
+            
             await page.goto(self.base_url)
             await self.setupPage(page, pageNum)
 
