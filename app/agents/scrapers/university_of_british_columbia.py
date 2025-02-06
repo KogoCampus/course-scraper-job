@@ -122,9 +122,6 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
             "total_sections": self.totalSections
         }
 
-        with open('data.json', 'w') as f:
-            json.dump(data, f)
-
         # for d in r:
         #     data['semester'] = d['semester']
         #     data['programs'].extend(d['programs'])
@@ -154,6 +151,8 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                 "width": 500,
                 "height": 800,
             })
+            page.set_default_timeout = 60000
+            page.set_default_navigation_timeout = 60000
             await page.goto(self.base_url)
             await self.setupPage(page, pageNum)
 
