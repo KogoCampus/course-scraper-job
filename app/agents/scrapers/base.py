@@ -41,7 +41,7 @@ class BaseScraper(ABC):
                 "error": None
             }
         except Exception as e:
-            self.logger.error(f"Error in {self.task_name} scraper: {str(e)}")
+            self.logger.error(f"Error in {self.task_name} scraper: {str(e)}", exc_info=True)
             return {
                 "task_name": self.task_name,
                 "started_at": self.started_at,
