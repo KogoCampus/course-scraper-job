@@ -84,7 +84,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
     async def fetch_courses(self) -> CourseListingModel:
         r = []
         len = 0
-        window = 4
+        window = 2
 
         async with async_playwright() as p:
             browser = await p.webkit.launch()
