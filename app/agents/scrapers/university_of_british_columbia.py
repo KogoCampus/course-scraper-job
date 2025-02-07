@@ -103,16 +103,16 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
             subjectLen = int(pagination[0].split('-')[1].strip())
             totalSubjectLen = int(pagination[1].strip())
             len = int(totalSubjectLen / subjectLen) + 1
-            itr = len / window
+            itr = int(len / window)
             remainder = len % window
 
-            r = await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(0,len)]))
+            # r = await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(0,len)]))
 
-            # for i in range(window, len + window, window):
-            #     r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(i-window,i)])))
+            for i in range(window, len + window - 1, window):
+                r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(i-window,i)])))
             
-            # for i in range(remainder):
-            #     self.fetch_courses_e(page=page, pageNum=i+(window * itr))
+            r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u+(window*itr))) for u in range(remainder)])))
+
             await page.close()
             await browser.close()
         
@@ -214,7 +214,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
                             await page.wait_for_selector('.course-view')
                         except:
                             self.logger.info(f"A section in {currentName} failed")
-                            continue
+                            break
 
                         currentCourse = {
                             "courseName": "",
