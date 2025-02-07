@@ -84,10 +84,10 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
     async def fetch_courses(self) -> CourseListingModel:
         r = []
         len = 0
-        window = 2
+        window = 1
 
         async with async_playwright() as p:
-            browser = await p.webkit.launch()
+            browser = await p.firefox.launch()
             page = await browser.new_page()
             await page.set_viewport_size({
                 "width": 500,
@@ -109,9 +109,9 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
             # r = await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(0,len)]))
 
             for i in range(window, len + window - 1, window):
-                r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u)) for u in range(i-window,i)])))
+                r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(pageNum=u)) for u in range(i-window,i)])))
             
-            r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(page=page, pageNum=u+(window*itr))) for u in range(remainder)])))
+            r.append(await asyncio.gather(*([asyncio.ensure_future(self.fetch_courses_e(pageNum=u+(window*itr))) for u in range(remainder)])))
 
             await page.close()
             await browser.close()
@@ -137,7 +137,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         return data
 
 
-    async def fetch_courses_e(self, page, pageNum) -> CourseListingModel:
+    async def fetch_courses_e(self, pageNum) -> CourseListingModel:
         """Fetch course data from UBC API"""
         year = datetime.now().year
         term = self._determine_term()
