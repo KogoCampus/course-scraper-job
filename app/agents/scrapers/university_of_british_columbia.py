@@ -87,7 +87,7 @@ class UniversityOfBritishColumbiaScraper(BaseScraper):
         window = 1
 
         async with async_playwright() as p:
-            browser = await p.firefox.launch()
+            browser = await p.chromium.launch()
             page = await browser.new_page()
             await page.set_viewport_size({
                 "width": 500,
