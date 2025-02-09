@@ -27,7 +27,7 @@ class LocalStorage(BaseStorage):
             with file_path.open('w') as f:
                 f.write(self._serialize_data(data))
 
-            logger.info(f"Saved {file_name} for {task_name}")
+            logger.info(f"Saved {file_name} for {task_name} at: {file_path}")
             return str(file_path)
         except Exception as e:
             logger.error(f"Error saving data for {task_name}: {str(e)}")

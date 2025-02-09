@@ -11,7 +11,7 @@ def setup_logging(log_level: str = "INFO") -> None:
         "disable_existing_loggers": False,
         "formatters": {
             "standard": {
-                "format": "%(asctime)s | %(levelname)s | %(name)s | %(message)s%(exc_info)s",
+                "format": "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             }
         },
@@ -27,12 +27,7 @@ def setup_logging(log_level: str = "INFO") -> None:
                 "handlers": ["console"],
                 "level": log_level,
             },
-            "celery": {
-                "handlers": ["console"],
-                "level": log_level,
-                "propagate": False,
-            },
-            "celery.task": {
+            "scraper.task": {
                 "handlers": ["console"],
                 "level": log_level,
                 "propagate": False,

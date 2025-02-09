@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     S3_PREFIX: str = "course_data"
 
     # LLM settings
-    LLM_MODEL: str = "mistral/mistral-medium"
-    MISTRAL_API_KEY: Optional[str] = None
+    LLM_MODEL: str = "gpt-4-turbo-preview"  # OpenAI's latest model
+    OPENAI_API_KEY: Optional[str] = None
 
     # AWS settings
     AWS_ACCESS_KEY_ID: Optional[str] = None
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     FLOWER_BASIC_AUTH_PASSWORD: str = "password"
 
     class Config:
-        env_file = (Path(__file__).parent.parent / '.env',)
+        env_file = (Path(__file__).parent.parent.parent / '.env',)
         env_file_encoding = 'utf-8'
 
 settings = Settings()

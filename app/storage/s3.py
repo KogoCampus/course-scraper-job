@@ -34,6 +34,7 @@ class S3Storage(BaseStorage):
             path_parts.append(file_name)
             
             s3_key = self._path_to_s3_key(Path(*path_parts))
+            s3_path = f"s3://{self.bucket}/{s3_key}"
             
             json_data = self._serialize_data(data)
             
@@ -44,8 +45,8 @@ class S3Storage(BaseStorage):
                 ContentType='application/json'
             )
 
-            logger.info(f"Saved {file_name} to S3 for {task_name}")
-            return f"s3://{self.bucket}/{s3_key}"
+            logger.info(f"Saved {file_name} for {task_name} at: {s3_path}")
+            return s3_path
         except Exception as e:
             logger.error(f"Error saving data to S3 for {task_name}: {str(e)}")
             raise

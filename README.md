@@ -2,69 +2,31 @@
 
 
 ## Setup
-1. Copy .env.example to .env and populate with your values.
+1. Install UV package manager (skip if already installed)
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+2. Install dependencies
+```
+uv sync
+```
+
+3. Copy the .env.example file to .env and populate with your values.
 ```
 cp .env.example .env
 ```
 
-2. Run docker compose to build and run the container:
+4. Enable virtual environment
 ```
-docker compose up
-# or
-sudo docker compose up --build
+source venv/bin/activate
 ```
 
+## Run the scraper
+Check the `run_task.py` file and task scripts in `app/tasks` to see the available tasks.  
+`run_task.py` is a CLI tool to run tasks directly. This will dynamically import the task module with the provided task name arguments.  
 
-## Monitoring & Task Management Console
-
-- Flower Dashboard: http://localhost:5555
-- Celery Beat: http://localhost:8000/
-
-
-## Triggering Tasks Manually
-
-### Using CLI Tool (Local Development)
-For local development and testing, you can use the `run_task.py` script to run scrapers directly:
-```bash
-python run_task.py <task_argument>
-
-# Example:
-python run_task.py sample  # Runs the sample scraper
+Example:
 ```
-
-### Using Flower API
-For production environment, you can trigger tasks via the Flower API:
-```bash
-curl -X POST \
-  'http://localhost:5555/api/task/async-apply/scraper_task' \
-  -u "admin:password" \
-  -H "Content-Type: application/json" \
-  -d '{"args": ["task_name"]}'
-```
-for example:
-```bash
-curl -X POST \
-  'http://localhost:5555/api/task/async-apply/scraper_task' \
-  -u "admin:password" \
-  -d '{"args": ["sample"]}'
-```
-
-
-## Edit the environment variables for the production environments
-
-1. Install SOPS:
-```
-brew install sops
-```
-
-2. Decrypt the environment file:
-```
-sops --config .sops/sops.yaml -d -i .sops/prod.env
-```
-
-3. Fill in the missing values in the `values.env` file.
-
-4. Encrypt the environment file:
-```
-sops --config .sops/sops.yaml -e -i .sops/prod.env
+python run_task.py scraper_task sample
 ```
