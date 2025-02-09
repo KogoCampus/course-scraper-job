@@ -3,11 +3,13 @@ from .base import BaseScraper
 from .simon_fraser_university import SimonFraserUniversityScraper
 from .sample import SampleScraper
 from .university_of_british_columbia import *
+from .university_of_waterloo import *
 
 SCRAPER_MAP = {
     'sample': SampleScraper,
     'simon_fraser_university': SimonFraserUniversityScraper,
     'university_of_british_columbia': UniversityOfBritishColumbiaScraper,
+    'university_of_waterloo': UniversityOfWaterlooScraper
 }
 
 def get_scraper_class(school: str) -> Type[BaseScraper]:
